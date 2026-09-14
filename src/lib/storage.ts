@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 
 export const PHOTOS_BUCKET = "event-photos";
+export const PHOTO_SIGNED_URL_TTL_SECONDS = 300;
 
 async function computeChecksum(file: File): Promise<string> {
   const buffer = await file.arrayBuffer();

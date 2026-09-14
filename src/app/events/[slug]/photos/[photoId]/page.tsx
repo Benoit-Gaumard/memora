@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { DeletePhotoButton } from "@/components/photos/delete-photo-button";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { PHOTO_SIGNED_URL_TTL_SECONDS } from "@/lib/storage";
 import { formatDate } from "@/lib/utils";
 
 export default async function PhotoFullScreenPage({
@@ -42,7 +43,7 @@ export default async function PhotoFullScreenPage({
 
   const { data: signed } = await supabase.storage
     .from("event-photos")
-    .createSignedUrl(photo.storage_display_path, 3600);
+    .createSignedUrl(photo.storage_display_path, PHOTO_SIGNED_URL_TTL_SECONDS);
 
   const author = Array.isArray(photo.profiles) ? photo.profiles[0]?.display_name : photo.profiles?.display_name;
   const isOwner = photo.user_id === user.id;
