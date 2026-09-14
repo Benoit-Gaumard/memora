@@ -1,12 +1,6 @@
 import Link from "next/link";
 import { Camera, Sparkles } from "lucide-react";
-
-const navItems = [
-  { href: "/", label: "Accueil" },
-  { href: "/events", label: "Événements" },
-  { href: "/admin", label: "Admin" },
-  { href: "/profile", label: "Profil" },
-];
+import { SiteNav } from "@/components/layout/site-nav";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -21,11 +15,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </Link>
 
           <nav className="hidden items-center gap-6 text-sm font-medium text-[#5c4f46] md:flex">
-            {navItems.map((item) => (
-              <Link key={item.href} href={item.href} className="transition hover:text-[#1f1b18]">
-                {item.label}
-              </Link>
-            ))}
+            <SiteNav />
           </nav>
 
           <div className="flex items-center gap-2">
@@ -45,7 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-6xl items-center justify-center px-4 py-6 text-sm text-[#655750] sm:px-6">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-[#d57f45]" />
-            Conçu pour des souvenirs sûrs et partageables.
+            Conçu pour rassembler et célébrer vos plus beaux souvenirs.
           </div>
         </div>
       </footer>

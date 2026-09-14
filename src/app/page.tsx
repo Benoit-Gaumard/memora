@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Camera, CheckCircle2, Lock, ShieldCheck } from "lucide-react";
+import { ArrowRight, Camera, Lock, ShieldCheck } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 
 export default function HomePage() {
@@ -17,7 +17,7 @@ export default function HomePage() {
             </h1>
             <p className="mt-4 max-w-xl text-base leading-8 text-[#5f524d] md:text-lg">
               Memora transforme chaque fête en album chaleureux, pensé pour partager les instantanés
-              les plus précieux entre invités, sans friction ni confusion.
+              les plus précieux entre invités.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
@@ -45,14 +45,6 @@ export default function HomePage() {
                 className="h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1d150f]/65 via-[#1d150f]/10 to-transparent" />
-              <div className="absolute inset-x-5 bottom-5 rounded-[22px] border border-white/30 bg-white/85 p-4 backdrop-blur-md">
-                <div className="text-[10px] uppercase tracking-[0.22em] text-[#8a6859]">Événement privé</div>
-                <div className="mt-2 text-xl font-bold text-[#231d1a]">Un album pensé pour célébrer l’instant</div>
-                <div className="mt-3 flex items-center gap-2 text-sm text-[#544c49]">
-                  <CheckCircle2 className="h-4 w-4 text-[#2a7a48]" />
-                  Accès réservé aux invités
-                </div>
-              </div>
             </div>
           </div>
         </div>

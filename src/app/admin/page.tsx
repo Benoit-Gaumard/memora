@@ -1,11 +1,10 @@
 import { AppShell } from "@/components/layout/app-shell";
-import { Activity, Camera, Database, Shield, Users } from "lucide-react";
+import { Activity, Camera, Shield, Users } from "lucide-react";
 
 const stats = [
   { label: "Événements actifs", value: "24", icon: Camera },
   { label: "Utilisateurs", value: "612", icon: Users },
-  { label: "Photos", value: "3.2k", icon: Database },
-  { label: "Stockage utilisé", value: "1.7 TB", icon: Activity },
+  { label: "Photos", value: "3.2k", icon: Activity },
 ];
 
 export default function AdminDashboard() {
@@ -16,14 +15,13 @@ export default function AdminDashboard() {
         <h1 className="mt-3 text-4xl font-black tracking-tight text-[#201c1a]">Dashboard admin</h1>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         {stats.map(({ label, value, icon: Icon }) => (
           <div key={label} className="rounded-3xl border border-[#f0d9bf] bg-white p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="rounded-2xl bg-[#fff4e9] p-2 text-[#d57f45]">
                 <Icon className="h-5 w-5" />
               </div>
-              <div className="text-xs uppercase tracking-[0.2em] text-[#8a7268]">Live</div>
             </div>
             <div className="mt-6 text-3xl font-black text-[#201c1a]">{value}</div>
             <div className="mt-2 text-sm text-[#5a4d47]">{label}</div>
@@ -39,10 +37,10 @@ export default function AdminDashboard() {
 
         <div className="mt-4 space-y-3 text-sm text-[#5a4d47]">
           {[
-            "EVENT_CREATED — Weekend à Lyon — admin@memora.app",
-            "PHOTO_UPLOAD_COMPLETED — 42 photos ajoutées — 2 min ago",
-            "MEMBER_ROLE_CHANGED — Alice devient organizer — 18 min ago",
-            "INVITE_REGENERATED — code AB7KQ2 remplacé — 1 heure ago",
+            "Nouvel événement créé : Weekend à Lyon",
+            "42 nouvelles photos partagées",
+            "Alice a été promue organisatrice",
+            "Un nouveau lien d’invitation a été généré",
           ].map((event) => (
             <div key={event} className="rounded-2xl bg-white p-3">
               {event}

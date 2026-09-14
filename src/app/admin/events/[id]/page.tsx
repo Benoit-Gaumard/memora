@@ -25,8 +25,7 @@ export default async function AdminEventDetailPage({
             ["Type", event.event_type],
             ["Date", new Date(event.event_date).toLocaleDateString("fr-FR")],
             ["Statut", event.status],
-            ["Bucket", event.bucket_name],
-            ["Files max", String(event.max_files_per_upload)],
+            ["Photos maximum par envoi", String(event.max_files_per_upload)],
             ["Téléchargement", event.download_enabled ? "Oui" : "Non"],
           ].map(([label, value]) => (
             <div key={String(label)} className="rounded-2xl bg-[#fff5ed] p-4">

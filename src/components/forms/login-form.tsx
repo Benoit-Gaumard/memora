@@ -35,13 +35,26 @@ export function LoginForm() {
         return;
       }
 
+      const hasLiveSupabase = Boolean(
+        process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      );
+      const session = "session" in result.data ? result.data.session : undefined;
+
+      if (hasLiveSupabase && mode === "signup" && !session) {
+        setMessage(
+          "Compte créé. Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.",
+        );
+        return;
+      }
+
       setMessage(
         mode === "signin"
           ? "Connexion réussie. Redirection…"
-          : "Compte créé. Vérification de votre accès…",
+          : "Compte créé. Redirection…",
       );
 
       router.push("/events");
+      router.refresh();
     } catch (error) {
       setMessage(
         error instanceof Error

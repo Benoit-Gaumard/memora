@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Memora | Private event gallery",
+  title: "Memora | Vos albums d'événements",
   description:
-    "A secure, shared photo gallery for private events with QR invites, per-event buckets and strict member access.",
+    "Retrouvez et partagez les photos de vos événements avec vos proches, en toute simplicité.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
