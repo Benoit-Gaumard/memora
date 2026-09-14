@@ -8,7 +8,7 @@ export function PhotoGrid({
   photos,
 }: {
   eventSlug: string;
-  photos: (PhotoRecord & { url?: string | null })[];
+  photos: (PhotoRecord & { url?: string | null; authorName?: string | null })[];
 }) {
   if (!photos.length) {
     return (
@@ -42,6 +42,9 @@ export function PhotoGrid({
             <div className="text-sm font-medium text-[#2f2825]">{photo.original_filename}</div>
             <div className="text-xs text-[#7c675d]">
               {formatShortDate(photo.captured_at ?? photo.uploaded_at ?? photo.created_at)}
+            </div>
+            <div className="text-xs font-medium text-[#a6623a]">
+              Ajoutée par {photo.authorName ?? "un membre"}
             </div>
           </div>
         </Link>

@@ -43,7 +43,7 @@ export default async function EventDetailPage({
 
   const { data: photos } = await supabase
     .from("photos")
-    .select("*")
+    .select("*, profiles(display_name)")
     .eq("event_id", event.id)
     .order("uploaded_at", { ascending: false });
 
@@ -53,7 +53,11 @@ export default async function EventDetailPage({
         .from("event-photos")
         .createSignedUrl(photo.storage_display_path, 3600);
 
-      return { ...photo, url: signed?.signedUrl ?? null };
+      const authorName = Array.isArray(photo.profiles)
+        ? photo.profiles[0]?.display_name
+        : photo.profiles?.display_name;
+
+      return { ...photo, url: signed?.signedUrl ?? null, authorName: authorName ?? null };
     }),
   );
 
