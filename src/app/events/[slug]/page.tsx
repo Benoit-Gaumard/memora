@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Camera, Download, ImageIcon, Upload } from "lucide-react";
-import { notFound } from "next/navigation";
+import { Camera, ImageIcon } from "lucide-react";
+import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { PhotoGrid } from "@/components/gallery/photo-grid";
-import { getEventBySlug, getEventPhotos } from "@/lib/mock-data";
+import { PhotoUploader } from "@/components/photos/photo-uploader";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { formatDate } from "@/lib/utils";
 
 export default async function EventDetailPage({
@@ -12,13 +13,49 @@ export default async function EventDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const event = getEventBySlug(slug);
+  const supabase = await getSupabaseServerClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { data: event } = await supabase.from("events").select("*").eq("slug", slug).maybeSingle();
 
   if (!event) {
     notFound();
   }
 
-  const photos = getEventPhotos(event.id);
+  const { data: membership } = await supabase
+    .from("event_members")
+    .select("id")
+    .eq("event_id", event.id)
+    .eq("user_id", user.id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (!membership) {
+    notFound();
+  }
+
+  const { data: photos } = await supabase
+    .from("photos")
+    .select("*")
+    .eq("event_id", event.id)
+    .order("uploaded_at", { ascending: false });
+
+  const photosWithUrls = await Promise.all(
+    (photos ?? []).map(async (photo) => {
+      const { data: signed } = await supabase.storage
+        .from("event-photos")
+        .createSignedUrl(photo.storage_display_path, 3600);
+
+      return { ...photo, url: signed?.signedUrl ?? null };
+    }),
+  );
 
   return (
     <AppShell>
@@ -50,32 +87,18 @@ export default async function EventDetailPage({
             </span>
             <span className="inline-flex items-center gap-2 rounded-full bg-[#fff4e9] px-3 py-1.5">
               <ImageIcon className="h-4 w-4 text-[#d57f45]" />
-              {photos.length} photos
+              {photosWithUrls.length} photos
             </span>
           </div>
 
-          <div className="flex gap-2">
-            <button className="inline-flex items-center gap-2 rounded-full bg-[#f4b178] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#e6995b]">
-              <Upload className="h-4 w-4" />
-              Ajouter des photos
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-full border border-[#efceaa] bg-white px-4 py-2 text-sm font-semibold text-[#433a35] transition hover:bg-[#fff5ec]">
-              <Download className="h-4 w-4" />
-              Télécharger
-            </button>
-          </div>
+          <PhotoUploader eventId={event.id} />
         </div>
       </section>
 
       <section className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Galerie</div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#fff5ed] px-3 py-1.5 text-sm text-[#5b483e]">
-            12 nouvelles photos
-          </div>
-        </div>
+        <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Galerie</div>
 
-        <PhotoGrid eventSlug={event.slug} photos={photos} />
+        <PhotoGrid eventSlug={event.slug} photos={photosWithUrls} />
 
         <div className="text-sm text-[#655a54]">
           Retour à la liste des <Link href="/events" className="font-semibold text-[#c47242]">événements</Link>.

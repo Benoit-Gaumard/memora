@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Download, ArrowLeft, Trash2 } from "lucide-react";
-import { notFound } from "next/navigation";
+import { Download, ArrowLeft } from "lucide-react";
+import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
-import { getEventBySlug, getPhotoById } from "@/lib/mock-data";
+import { DeletePhotoButton } from "@/components/photos/delete-photo-button";
+import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { formatDate } from "@/lib/utils";
 
 export default async function PhotoFullScreenPage({
@@ -12,12 +13,38 @@ export default async function PhotoFullScreenPage({
   params: Promise<{ slug: string; photoId: string }>;
 }) {
   const { slug, photoId } = await params;
-  const event = getEventBySlug(slug);
-  const photo = getPhotoById(photoId);
+  const supabase = await getSupabaseServerClient();
 
-  if (!event || !photo) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const { data: event } = await supabase.from("events").select("id, slug").eq("slug", slug).maybeSingle();
+
+  if (!event) {
     notFound();
   }
+
+  const { data: photo } = await supabase
+    .from("photos")
+    .select("*, profiles(display_name)")
+    .eq("id", photoId)
+    .eq("event_id", event.id)
+    .maybeSingle();
+
+  if (!photo) {
+    notFound();
+  }
+
+  const { data: signed } = await supabase.storage
+    .from("event-photos")
+    .createSignedUrl(photo.storage_display_path, 3600);
+
+  const author = Array.isArray(photo.profiles) ? photo.profiles[0]?.display_name : photo.profiles?.display_name;
 
   return (
     <AppShell>
@@ -29,25 +56,34 @@ export default async function PhotoFullScreenPage({
               Retour à la galerie
             </Link>
             <div className="flex gap-2">
-              <button className="inline-flex items-center gap-2 rounded-full bg-[#f4b178] px-3 py-2 text-xs font-semibold text-white">
-                <Download className="h-3.5 w-3.5" />
-                Télécharger
-              </button>
-              <button className="inline-flex items-center gap-2 rounded-full border border-[#efceaa] bg-white px-3 py-2 text-xs font-semibold text-[#433a35]">
-                <Trash2 className="h-3.5 w-3.5" />
-                Supprimer
-              </button>
+              {signed?.signedUrl ? (
+                <a
+                  href={signed.signedUrl}
+                  download={photo.original_filename}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#f4b178] px-3 py-2 text-xs font-semibold text-white"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Télécharger
+                </a>
+              ) : null}
+              <DeletePhotoButton
+                photoId={photo.id}
+                storagePath={photo.storage_original_path}
+                eventSlug={slug}
+              />
             </div>
           </div>
 
-          <Image
-            src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80"
-            alt={photo.original_filename}
-            width={1200}
-            height={1200}
-            unoptimized
-            className="w-full object-cover"
-          />
+          {signed?.signedUrl ? (
+            <Image
+              src={signed.signedUrl}
+              alt={photo.original_filename}
+              width={1200}
+              height={1200}
+              unoptimized
+              className="w-full object-cover"
+            />
+          ) : null}
         </div>
 
         <aside className="rounded-[32px] border border-[#f0d9bf] bg-white p-5 shadow-sm">
@@ -56,7 +92,7 @@ export default async function PhotoFullScreenPage({
 
           <div className="mt-5 space-y-3 text-sm text-[#4f4340]">
             <div className="rounded-2xl bg-[#fff5ed] p-3">
-              <span className="font-semibold text-[#7d5e45]">Auteur :</span> Paul Martin
+              <span className="font-semibold text-[#7d5e45]">Auteur :</span> {author ?? "Membre"}
             </div>
             <div className="rounded-2xl bg-[#fff5ed] p-3">
               <span className="font-semibold text-[#7d5e45]">Date :</span>{" "}
