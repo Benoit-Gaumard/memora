@@ -1,6 +1,6 @@
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { PhotosManager, type AdminEventOption, type AdminPhotoItem } from "@/components/admin/photos-manager";
-import { PHOTO_SIGNED_URL_TTL_SECONDS } from "@/lib/storage";
+import { getPrivatePhotoUrl } from "@/lib/private-photo";
 
 interface PhotoWithRelations {
   id: string;
@@ -46,10 +46,6 @@ export default async function AdminPhotosPage({
 
   const photosWithUrls: AdminPhotoItem[] = await Promise.all(
     photos.map(async (photo) => {
-      const { data: signed } = await supabase.storage
-        .from("event-photos")
-        .createSignedUrl(photo.storage_display_path, PHOTO_SIGNED_URL_TTL_SECONDS);
-
       const eventName = Array.isArray(photo.events) ? photo.events[0]?.name : photo.events?.name;
       const authorName = Array.isArray(photo.profiles)
         ? photo.profiles[0]?.display_name
@@ -64,7 +60,7 @@ export default async function AdminPhotosPage({
         storage_thumbnail_path: photo.storage_thumbnail_path,
         eventName: eventName ?? "Événement",
         authorName: authorName ?? "Membre",
-        url: signed?.signedUrl ?? null,
+        url: getPrivatePhotoUrl(photo.storage_display_path),
       };
     }),
   );

@@ -5,7 +5,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { PhotoGrid } from "@/components/gallery/photo-grid";
 import { PhotoUploader } from "@/components/photos/photo-uploader";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
-import { PHOTO_SIGNED_URL_TTL_SECONDS } from "@/lib/storage";
+import { getPrivatePhotoUrl } from "@/lib/private-photo";
 import { formatDate } from "@/lib/utils";
 
 export default async function EventDetailPage({
@@ -50,24 +50,17 @@ export default async function EventDetailPage({
 
   const photosWithUrls = await Promise.all(
     (photos ?? []).map(async (photo) => {
-      const { data: signed } = await supabase.storage
-        .from("event-photos")
-        .createSignedUrl(photo.storage_display_path, PHOTO_SIGNED_URL_TTL_SECONDS);
-
       const authorName = Array.isArray(photo.profiles)
         ? photo.profiles[0]?.display_name
         : photo.profiles?.display_name;
 
-      return { ...photo, url: signed?.signedUrl ?? null, authorName: authorName ?? null };
+      return { ...photo, url: getPrivatePhotoUrl(photo.storage_display_path), authorName: authorName ?? null };
     }),
   );
 
   let coverImageUrl: string | null = null;
   if (event.cover_image_path) {
-    const { data: signed } = await supabase.storage
-      .from("event-photos")
-      .createSignedUrl(event.cover_image_path, PHOTO_SIGNED_URL_TTL_SECONDS);
-    coverImageUrl = signed?.signedUrl ?? null;
+    coverImageUrl = getPrivatePhotoUrl(event.cover_image_path);
   }
 
   return (
