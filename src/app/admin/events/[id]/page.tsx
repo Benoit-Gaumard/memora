@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { EventMembersManager } from "@/components/admin/event-members-manager";
+import { RemoveMemberButton } from "@/components/admin/remove-member-button";
 
 export default async function AdminEventDetailPage({
   params,
@@ -17,7 +19,7 @@ export default async function AdminEventDetailPage({
 
   const { data: members } = await supabase
     .from("event_members")
-    .select("id, role, status, joined_at, profiles(display_name, username, email)")
+    .select("id, user_id, role, status, joined_at, profiles(display_name, username, email)")
     .eq("event_id", id)
     .order("joined_at", { ascending: true });
 
@@ -25,6 +27,22 @@ export default async function AdminEventDetailPage({
     .from("photos")
     .select("id", { count: "exact", head: true })
     .eq("event_id", id);
+
+  const memberUserIds = new Set((members ?? []).map((member) => member.user_id));
+
+  const { data: allProfiles } = await supabase
+    .from("profiles")
+    .select("id, display_name, username, email")
+    .order("display_name", { ascending: true });
+
+  const candidates = (allProfiles ?? [])
+    .filter((profile) => !memberUserIds.has(profile.id))
+    .map((profile) => ({
+      id: profile.id,
+      displayName: profile.display_name,
+      username: profile.username,
+      email: profile.email,
+    }));
 
   return (
     <div className="space-y-6">
@@ -49,12 +67,14 @@ export default async function AdminEventDetailPage({
         </div>
       </div>
 
+      <EventMembersManager eventId={event.id} candidates={candidates} />
+
       <div className="overflow-hidden rounded-[32px] border border-[#f0d9bf] bg-white shadow-sm">
         <div className="border-b border-[#f4e5d3] px-5 py-4 text-lg font-bold text-[#241e1a]">Membres</div>
         <table className="min-w-full text-left text-sm text-[#4d4039]">
           <thead className="bg-[#fff5ed] text-[#786860]">
             <tr>
-              {["Nom", "Adresse e-mail", "Rôle", "Statut"].map((header) => (
+              {["Nom", "Adresse e-mail", "Rôle", "Statut", ""].map((header) => (
                 <th key={header} className="px-4 py-3 font-semibold">
                   {header}
                 </th>
@@ -74,12 +94,15 @@ export default async function AdminEventDetailPage({
                     <td className="px-4 py-4">{profile?.email}</td>
                     <td className="px-4 py-4">{member.role === "organizer" ? "Organisateur" : "Invité"}</td>
                     <td className="px-4 py-4">{member.status}</td>
+                    <td className="px-4 py-4">
+                      {member.role === "organizer" ? null : <RemoveMemberButton memberId={member.id} />}
+                    </td>
                   </tr>
                 );
               })
             ) : (
               <tr>
-                <td colSpan={4} className="px-4 py-6 text-center text-[#8a7268]">
+                <td colSpan={5} className="px-4 py-6 text-center text-[#8a7268]">
                   Aucun membre pour le moment.
                 </td>
               </tr>
