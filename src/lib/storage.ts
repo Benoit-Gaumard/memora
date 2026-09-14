@@ -86,3 +86,67 @@ export async function uploadEventPhoto({
 
   return { error: null };
 }
+
+/**
+ * Uploads (or replaces) an event's cover photo. The file is stored in the
+ * same shared bucket, under a dedicated "cover" sub-folder for that event,
+ * and the event row's `cover_image_path` is updated to point to it. The
+ * previous cover file (if any) is removed afterwards.
+ */
+export async function uploadEventCoverImage({
+  eventId,
+  file,
+  previousPath,
+}: {
+  eventId: string;
+  file: File;
+  previousPath?: string | null;
+}) {
+  const extension = file.name.includes(".") ? file.name.split(".").pop() : "";
+  const storagePath = `${eventId}/cover/${crypto.randomUUID()}${extension ? `.${extension}` : ""}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("event-photos")
+    .upload(storagePath, file, { contentType: file.type, upsert: false });
+
+  if (uploadError) {
+    return { error: uploadError };
+  }
+
+  const { error: updateError } = await supabase
+    .from("events")
+    .update({ cover_image_path: storagePath })
+    .eq("id", eventId);
+
+  if (updateError) {
+    await supabase.storage.from("event-photos").remove([storagePath]);
+    return { error: updateError };
+  }
+
+  if (previousPath) {
+    await supabase.storage.from("event-photos").remove([previousPath]);
+  }
+
+  return { error: null, path: storagePath };
+}
+
+/**
+ * Removes every stored object under an event's folder (photos + cover image).
+ * Best-effort: storage isn't covered by the DB's ON DELETE CASCADE, so this
+ * must be called explicitly before/after deleting the event row.
+ */
+export async function deleteEventStorageFolder(eventId: string) {
+  const { data: rootFiles } = await supabase.storage.from("event-photos").list(eventId);
+  const { data: coverFiles } = await supabase.storage.from("event-photos").list(`${eventId}/cover`);
+
+  const paths = [
+    ...(rootFiles ?? [])
+      .filter((entry) => entry.name !== "cover")
+      .map((entry) => `${eventId}/${entry.name}`),
+    ...(coverFiles ?? []).map((entry) => `${eventId}/cover/${entry.name}`),
+  ];
+
+  if (paths.length > 0) {
+    await supabase.storage.from("event-photos").remove(paths);
+  }
+}
