@@ -15,14 +15,21 @@ function slugify(value: string) {
   );
 }
 
+function defaultEventDate() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset();
+  const local = new Date(now.getTime() - offset * 60 * 1000);
+  return local.toISOString().slice(0, 10);
+}
+
 export function CreateEventForm() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [eventType, setEventType] = useState("Mariage");
-  const [eventDate, setEventDate] = useState("");
+  const [eventDate, setEventDate] = useState(defaultEventDate);
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +42,7 @@ export function CreateEventForm() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        setMessage("Vous devez être connecté pour créer un événement.");
+        setMessage({ type: "error", text: "Vous devez être connecté pour créer un événement." });
         return;
       }
 
@@ -57,7 +64,11 @@ export function CreateEventForm() {
         .single();
 
       if (eventError || !createdEvent) {
-        setMessage(eventError?.message ?? "Impossible de créer l'événement.");
+        console.error("Erreur création événement:", eventError);
+        setMessage({
+          type: "error",
+          text: eventError?.message ?? "Impossible de créer l'événement.",
+        });
         return;
       }
 
@@ -70,18 +81,28 @@ export function CreateEventForm() {
       });
 
       if (memberError) {
-        setMessage(memberError.message);
+        console.error("Erreur ajout organisateur:", memberError);
+        // Ne pas laisser un événement orphelin sans organisateur : on annule.
+        await supabase.from("events").delete().eq("id", createdEvent.id);
+        setMessage({
+          type: "error",
+          text: `L'événement n'a pas pu être créé (${memberError.message}). Vérifiez que les scripts de base de données ont bien été exécutés dans Supabase.`,
+        });
         return;
       }
 
       setName("");
       setEventType("Mariage");
-      setEventDate("");
+      setEventDate(defaultEventDate());
       setDescription("");
-      setMessage("Événement créé avec succès.");
+      setMessage({ type: "success", text: "Événement créé avec succès." });
       router.refresh();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Une erreur est survenue.");
+      console.error("Erreur inattendue lors de la création de l'événement:", error);
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "Une erreur est survenue.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -138,8 +159,14 @@ export function CreateEventForm() {
       </label>
 
       {message ? (
-        <div className="rounded-2xl border border-[#f2d7c2] bg-[#fff7f1] px-3 py-2 text-sm text-[#5c4337] md:col-span-2">
-          {message}
+        <div
+          className={`rounded-2xl border px-3 py-2 text-sm font-medium md:col-span-2 ${
+            message.type === "error"
+              ? "border-red-300 bg-red-50 text-red-700"
+              : "border-green-300 bg-green-50 text-green-700"
+          }`}
+        >
+          {message.text}
         </div>
       ) : null}
 
