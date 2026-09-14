@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAccount, signInWithPassword } from "@/lib/auth";
 
-export function LoginForm() {
+export function LoginForm({ redirectTo }: { redirectTo?: string } = {}) {
   const router = useRouter();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [identifier, setIdentifier] = useState("paulmartin");
@@ -54,7 +54,8 @@ export function LoginForm() {
           : "Compte créé. Redirection…",
       );
 
-      router.push("/events");
+      const target = redirectTo && redirectTo.startsWith("/") ? redirectTo : "/events";
+      router.push(target);
       router.refresh();
     } catch (error) {
       setMessage(

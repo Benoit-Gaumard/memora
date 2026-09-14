@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { getSiteUrl } from "@/lib/site-url";
 import { EventMembersManager } from "@/components/admin/event-members-manager";
 import { RemoveMemberButton } from "@/components/admin/remove-member-button";
 import { EditEventForm } from "@/components/admin/edit-event-form";
 import { DeleteEventButton } from "@/components/admin/delete-event-button";
+import { EventInviteManager } from "@/components/admin/event-invite-manager";
 
 export default async function AdminEventDetailPage({
   params,
@@ -54,6 +56,17 @@ export default async function AdminEventDetailPage({
       email: profile.email,
     }));
 
+  const { data: invite } = await supabase
+    .from("event_invites")
+    .select("code")
+    .eq("event_id", id)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const siteUrl = await getSiteUrl();
+
   return (
     <div className="space-y-6">
       <div className="rounded-[32px] border border-[#f0d9bf] bg-white p-6 shadow-sm md:p-8">
@@ -91,6 +104,11 @@ export default async function AdminEventDetailPage({
         }}
         coverImageUrl={coverImageUrl}
       />
+
+      <div>
+        <h3 className="mb-3 text-lg font-bold text-[#241e1a]">Lien d’invitation</h3>
+        <EventInviteManager eventId={event.id} existingCode={invite?.code ?? null} siteUrl={siteUrl} />
+      </div>
 
       <EventMembersManager eventId={event.id} candidates={candidates} />
 

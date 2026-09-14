@@ -1,7 +1,13 @@
 import { AppShell } from "@/components/layout/app-shell";
 import { LoginForm } from "@/components/forms/login-form";
 
-export default function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect?: string }>;
+}) {
+  const { redirect } = await searchParams;
+
   return (
     <AppShell>
       <div className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1fr_1fr]">
@@ -16,7 +22,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <LoginForm />
+        <LoginForm redirectTo={redirect} />
       </div>
     </AppShell>
   );
