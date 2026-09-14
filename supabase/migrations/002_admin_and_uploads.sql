@@ -71,7 +71,8 @@ create policy "event_members_insert_owner_or_admin" on public.event_members
 -- ---------------------------------------------------------------------------
 insert into storage.buckets (id, name, public)
 values ('event-photos', 'event-photos', false)
-on conflict (id) do nothing;
+on conflict (id) do update
+set public = false;
 
 drop policy if exists "event_photos_select_members" on storage.objects;
 create policy "event_photos_select_members" on storage.objects

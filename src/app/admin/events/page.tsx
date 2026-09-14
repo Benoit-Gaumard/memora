@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
+import { PHOTO_SIGNED_URL_TTL_SECONDS } from "@/lib/storage";
 import { CreateEventForm } from "@/components/admin/create-event-form";
 import { DeleteEventButton } from "@/components/admin/delete-event-button";
 
@@ -16,7 +17,7 @@ export default async function AdminEventsPage() {
     if (!event.cover_image_path) continue;
     const { data: signed } = await supabase.storage
       .from("event-photos")
-      .createSignedUrl(event.cover_image_path, 3600);
+      .createSignedUrl(event.cover_image_path, PHOTO_SIGNED_URL_TTL_SECONDS);
     if (signed?.signedUrl) coverUrls.set(event.id, signed.signedUrl);
   }
 
