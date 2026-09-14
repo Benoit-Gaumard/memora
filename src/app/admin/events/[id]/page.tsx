@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { EventMembersManager } from "@/components/admin/event-members-manager";
 import { RemoveMemberButton } from "@/components/admin/remove-member-button";
+import { EditEventForm } from "@/components/admin/edit-event-form";
+import { DeleteEventButton } from "@/components/admin/delete-event-button";
 
 export default async function AdminEventDetailPage({
   params,
@@ -15,6 +17,14 @@ export default async function AdminEventDetailPage({
 
   if (!event) {
     notFound();
+  }
+
+  let coverImageUrl: string | null = null;
+  if (event.cover_image_path) {
+    const { data: signed } = await supabase.storage
+      .from("event-photos")
+      .createSignedUrl(event.cover_image_path, 3600);
+    coverImageUrl = signed?.signedUrl ?? null;
   }
 
   const { data: members } = await supabase
@@ -47,14 +57,16 @@ export default async function AdminEventDetailPage({
   return (
     <div className="space-y-6">
       <div className="rounded-[32px] border border-[#f0d9bf] bg-white p-6 shadow-sm md:p-8">
-        <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Événement</div>
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-[#201c1a]">{event.name}</h2>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Événement</div>
+            <h2 className="mt-3 text-4xl font-black tracking-tight text-[#201c1a]">{event.name}</h2>
+          </div>
+          <DeleteEventButton eventId={event.id} eventName={event.name} />
+        </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {[
-            ["Type", event.event_type],
-            ["Date", new Date(event.event_date).toLocaleDateString("fr-FR")],
-            ["Statut", event.status],
             ["Membres", String(members?.length ?? 0)],
             ["Photos", String(photoCount ?? 0)],
             ["Téléchargement", event.download_enabled ? "Oui" : "Non"],
@@ -66,6 +78,19 @@ export default async function AdminEventDetailPage({
           ))}
         </div>
       </div>
+
+      <EditEventForm
+        event={{
+          id: event.id,
+          name: event.name,
+          event_type: event.event_type,
+          description: event.description,
+          event_date: event.event_date,
+          status: event.status,
+          cover_image_path: event.cover_image_path,
+        }}
+        coverImageUrl={coverImageUrl}
+      />
 
       <EventMembersManager eventId={event.id} candidates={candidates} />
 
