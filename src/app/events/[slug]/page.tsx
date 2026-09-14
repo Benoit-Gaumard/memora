@@ -57,11 +57,26 @@ export default async function EventDetailPage({
     }),
   );
 
+  let coverImageUrl: string | null = null;
+  if (event.cover_image_path) {
+    const { data: signed } = await supabase.storage
+      .from("event-photos")
+      .createSignedUrl(event.cover_image_path, 3600);
+    coverImageUrl = signed?.signedUrl ?? null;
+  }
+
   return (
     <AppShell>
       <section className="mb-6 overflow-hidden rounded-[32px] border border-[#f0d9bf] bg-white shadow-sm">
-        <div className="h-52 bg-[radial-gradient(circle_at_top,_rgba(244,177,120,0.7),_rgba(255,250,243,0.9)_55%,_rgba(255,250,243,1))] p-6 md:h-72">
-          <div className="flex h-full flex-col justify-between">
+        <div className="relative h-52 overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(244,177,120,0.7),_rgba(255,250,243,0.9)_55%,_rgba(255,250,243,1))] p-6 md:h-72">
+          {coverImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={coverImageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          ) : null}
+          {coverImageUrl ? (
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1d150f]/70 via-[#1d150f]/10 to-transparent" />
+          ) : null}
+          <div className="relative flex h-full flex-col justify-between">
             <div className="flex items-center justify-between gap-3">
               <div className="rounded-full bg-[#fff9f2] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#7d6052]">
                 {event.event_type}

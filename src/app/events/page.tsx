@@ -24,6 +24,15 @@ export default async function EventsPage() {
     .map((membership) => (Array.isArray(membership.events) ? membership.events[0] : membership.events))
     .filter((event): event is NonNullable<typeof event> => Boolean(event));
 
+  const coverUrls = new Map<string, string>();
+  for (const event of events) {
+    if (!event.cover_image_path) continue;
+    const { data: signed } = await supabase.storage
+      .from("event-photos")
+      .createSignedUrl(event.cover_image_path, 3600);
+    if (signed?.signedUrl) coverUrls.set(event.id, signed.signedUrl);
+  }
+
   return (
     <AppShell>
       <div className="mb-6">
@@ -40,7 +49,13 @@ export default async function EventsPage() {
             const photoCount = Array.isArray(event.photos) ? (event.photos[0]?.count ?? 0) : 0;
 
             return (
-              <EventCard key={event.id} event={event} memberCount={memberCount} photoCount={photoCount} />
+              <EventCard
+                key={event.id}
+                event={event}
+                memberCount={memberCount}
+                photoCount={photoCount}
+                coverImageUrl={coverUrls.get(event.id)}
+              />
             );
           })}
         </div>

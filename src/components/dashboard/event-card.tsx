@@ -1,19 +1,38 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CalendarDays, ImageIcon, Lock, Users } from "lucide-react";
 import type { EventRecord } from "@/types/database";
 import { formatDate } from "@/lib/utils";
 
-export function EventCard({ event, memberCount, photoCount }: {
+export function EventCard({
+  event,
+  memberCount,
+  photoCount,
+  coverImageUrl,
+}: {
   event: EventRecord;
   memberCount: number;
   photoCount: number;
+  coverImageUrl?: string | null;
 }) {
   return (
     <Link
       href={`/events/${event.slug}`}
       className="overflow-hidden rounded-3xl border border-[#f0d9bf] bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
     >
-      <div className="relative h-36 bg-gradient-to-br from-[#f7d5a7] via-[#f7f0e8] to-[#f1cdb4] p-4">
+      <div className="relative h-36 overflow-hidden bg-gradient-to-br from-[#f7d5a7] via-[#f7f0e8] to-[#f1cdb4] p-4">
+        {coverImageUrl ? (
+          <Image
+            src={coverImageUrl}
+            alt=""
+            fill
+            sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+            className="absolute inset-0 object-cover"
+          />
+        ) : null}
+        {coverImageUrl ? (
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1d150f]/70 via-[#1d150f]/10 to-transparent" />
+        ) : null}
         <div className="absolute right-4 top-4 rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#5d473d]">
           {event.status}
         </div>
