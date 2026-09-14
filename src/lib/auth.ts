@@ -3,26 +3,43 @@ import { supabase } from "@/lib/supabase";
 export type AuthIntent = "signin" | "signup";
 
 export async function signInWithPassword(params: {
-  username: string;
+  identifier: string;
   password: string;
 }) {
+  const identifier = params.identifier.trim();
+
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return {
       data: {
         user: {
           id: "demo-user",
-          email: `${params.username}@memora.local`,
-          user_metadata: { username: params.username },
+          email: identifier.includes("@") ? identifier : `${identifier}@memora.local`,
+          user_metadata: { username: identifier },
         },
       },
       error: null,
     };
   }
 
-  const normalizedUsername = params.username.trim();
+  let email = identifier;
+
+  if (!identifier.includes("@")) {
+    const { data: resolvedEmail, error: lookupError } = await supabase.rpc("get_login_email", {
+      p_username: identifier,
+    });
+
+    if (lookupError || !resolvedEmail) {
+      return {
+        data: { user: null, session: null },
+        error: { name: "AuthApiError", message: "Identifiant ou mot de passe incorrect." },
+      };
+    }
+
+    email = resolvedEmail;
+  }
 
   return supabase.auth.signInWithPassword({
-    email: `${normalizedUsername}@memora.local`,
+    email,
     password: params.password,
   });
 }

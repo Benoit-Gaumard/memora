@@ -7,6 +7,7 @@ import { createAccount, signInWithPassword } from "@/lib/auth";
 export function LoginForm() {
   const router = useRouter();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [identifier, setIdentifier] = useState("paulmartin");
   const [username, setUsername] = useState("paulmartin");
   const [password, setPassword] = useState("Demo123!");
   const [displayName, setDisplayName] = useState("Paul Martin");
@@ -22,7 +23,7 @@ export function LoginForm() {
     try {
       const result =
         mode === "signin"
-          ? await signInWithPassword({ username, password })
+          ? await signInWithPassword({ identifier, password })
           : await createAccount({
               username,
               password,
@@ -113,14 +114,25 @@ export function LoginForm() {
           </label>
         ) : null}
 
-        <label className="block text-sm font-medium text-[#493d36]">
-          Username
-          <input
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none ring-0 transition focus:border-[#e38a52]"
-          />
-        </label>
+        {mode === "signup" ? (
+          <label className="block text-sm font-medium text-[#493d36]">
+            Username
+            <input
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none ring-0 transition focus:border-[#e38a52]"
+            />
+          </label>
+        ) : (
+          <label className="block text-sm font-medium text-[#493d36]">
+            Username ou email
+            <input
+              value={identifier}
+              onChange={(event) => setIdentifier(event.target.value)}
+              className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none ring-0 transition focus:border-[#e38a52]"
+            />
+          </label>
+        )}
 
         <label className="block text-sm font-medium text-[#493d36]">
           Mot de passe
