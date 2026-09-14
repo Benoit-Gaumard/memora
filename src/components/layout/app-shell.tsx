@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Camera, Sparkles } from "lucide-react";
 import { SiteNav } from "@/components/layout/site-nav";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { UserMenu } from "@/components/layout/user-menu";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -20,6 +21,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-2">
+            <MobileNav />
             <UserMenu />
           </div>
         </div>
