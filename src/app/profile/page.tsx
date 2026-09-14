@@ -21,7 +21,7 @@ export default async function ProfilePage() {
             <div className="mt-2 text-xl font-bold text-[#1f1b18]">{profile.username}</div>
           </div>
           <div className="rounded-2xl bg-[#fff5ed] p-4">
-            <div className="text-sm text-[#806d60]">Email</div>
+            <div className="text-sm text-[#806d60]">Adresse e-mail</div>
             <div className="mt-2 text-xl font-bold text-[#1f1b18]">{profile.email}</div>
           </div>
         </div>

@@ -15,7 +15,7 @@ export default async function AdminUsersPage() {
       <table className="min-w-full text-left text-sm text-[#4d4039]">
         <thead className="bg-[#fff5ed] text-[#786860]">
           <tr>
-            {["Nom", "Nom d’utilisateur", "Email", "Inscrit le", "Statut", ""].map((header) => (
+            {["Nom", "Nom d’utilisateur", "Adresse e-mail", "Inscrit le", "Statut", ""].map((header) => (
               <th key={header} className="px-4 py-3 font-semibold">
                 {header}
               </th>

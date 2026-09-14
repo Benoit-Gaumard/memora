@@ -104,7 +104,7 @@ export function LoginForm() {
 
         {mode === "signup" ? (
           <label className="block text-sm font-medium text-[#493d36]">
-            Email
+            Adresse e-mail
             <input
               value={email}
               onChange={(event) => setEmail(event.target.value)}
@@ -116,7 +116,7 @@ export function LoginForm() {
 
         {mode === "signup" ? (
           <label className="block text-sm font-medium text-[#493d36]">
-            Username
+            Identifiant
             <input
               value={username}
               onChange={(event) => setUsername(event.target.value)}
@@ -125,7 +125,7 @@ export function LoginForm() {
           </label>
         ) : (
           <label className="block text-sm font-medium text-[#493d36]">
-            Username ou email
+            Identifiant ou e-mail
             <input
               value={identifier}
               onChange={(event) => setIdentifier(event.target.value)}
