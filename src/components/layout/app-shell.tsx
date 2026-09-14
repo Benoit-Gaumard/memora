@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Camera, Sparkles } from "lucide-react";
 import { SiteNav } from "@/components/layout/site-nav";
+import { UserMenu } from "@/components/layout/user-menu";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -19,12 +20,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link
-              href="/login"
-              className="rounded-full border border-[#d7b38f] bg-[#fff3e6] px-3 py-2 text-sm font-semibold text-[#3c2d26] transition hover:bg-[#fce7d3]"
-            >
-              Se connecter
-            </Link>
+            <UserMenu />
           </div>
         </div>
       </header>

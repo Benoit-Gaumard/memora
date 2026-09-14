@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { useSupabaseSession } from "@/lib/use-session";
 
 const baseNavItems = [
   { href: "/", label: "Accueil" },
@@ -10,23 +9,9 @@ const baseNavItems = [
 ];
 
 export function SiteNav() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { session } = useSupabaseSession();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setIsAuthenticated(Boolean(data.session));
-    });
-
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(Boolean(session));
-    });
-
-    return () => {
-      subscription.subscription.unsubscribe();
-    };
-  }, []);
-
-  const navItems = isAuthenticated
+  const navItems = session
     ? [...baseNavItems, { href: "/profile", label: "Profil" }]
     : baseNavItems;
 
