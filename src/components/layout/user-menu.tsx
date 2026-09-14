@@ -64,7 +64,7 @@ export function UserMenu() {
       </button>
 
       {isOpen ? (
-        <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-[#f0d9bf] bg-white p-2 shadow-lg">
+        <div className="absolute right-0 z-50 mt-2 w-48 rounded-2xl border border-[#f0d9bf] bg-white p-2 shadow-lg">
           <div className="truncate px-3 py-2 text-sm font-semibold text-[#3c2d26]">
             {displayName}
           </div>

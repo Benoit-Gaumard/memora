@@ -6,7 +6,7 @@ import { UserMenu } from "@/components/layout/user-menu";
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#fffaf3] text-[#1f1b18]">
-      <header className="border-b border-[#efd9bf] bg-white/80 backdrop-blur-sm">
+      <header className="relative z-50 border-b border-[#efd9bf] bg-white/80 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link href="/" className="flex items-center gap-3 font-semibold tracking-tight">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f4b178] text-white shadow-sm">
