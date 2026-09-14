@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { ArrowRight, Camera, Lock, ShieldCheck } from "lucide-react";
+import { Camera, Lock, ShieldCheck } from "lucide-react";
 import { AppShell } from "@/components/layout/app-shell";
 
 export default function HomePage() {
@@ -19,22 +18,6 @@ export default function HomePage() {
               Memora transforme chaque fête en album chaleureux, pensé pour partager les instantanés
               les plus précieux entre invités.
             </p>
-
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link
-                href="/join/AB7KQ2"
-                className="inline-flex items-center gap-2 rounded-full bg-[#d38656] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(211,134,86,0.35)] transition hover:bg-[#c9784f]"
-              >
-                Rejoindre un événement
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-2 rounded-full border border-[#efceaa] bg-white/90 px-5 py-3 text-sm font-semibold text-[#433a35] transition hover:bg-[#fff5ec]"
-              >
-                Se connecter
-              </Link>
-            </div>
           </div>
 
           <div className="relative overflow-hidden rounded-[30px] border border-[#efcfaf] bg-white shadow-[0_30px_80px_rgba(87,59,35,0.12)]">
