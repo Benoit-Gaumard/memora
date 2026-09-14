@@ -17,7 +17,7 @@ export default async function AdminDashboard() {
       .limit(5),
     supabase
       .from("photos")
-      .select("id, original_filename, uploaded_at, events(name), profiles(display_name)")
+      .select("id, original_filename, uploaded_at, events(name), profiles!user_id(display_name)")
       .order("uploaded_at", { ascending: false })
       .limit(5),
   ]);

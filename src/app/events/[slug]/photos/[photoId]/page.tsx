@@ -31,7 +31,7 @@ export default async function PhotoFullScreenPage({
 
   const { data: photo } = await supabase
     .from("photos")
-    .select("*, profiles(display_name)")
+    .select("*, profiles!user_id(display_name)")
     .eq("id", photoId)
     .eq("event_id", event.id)
     .maybeSingle();

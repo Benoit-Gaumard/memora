@@ -15,7 +15,7 @@ export default async function AdminPhotosPage() {
 
   const { data } = await supabase
     .from("photos")
-    .select("id, original_filename, uploaded_at, storage_display_path, events(name), profiles(display_name)")
+    .select("id, original_filename, uploaded_at, storage_display_path, events(name), profiles!user_id(display_name)")
     .order("uploaded_at", { ascending: false })
     .limit(60);
 

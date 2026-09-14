@@ -43,7 +43,7 @@ export default async function EventDetailPage({
 
   const { data: photos } = await supabase
     .from("photos")
-    .select("*, profiles(display_name)")
+    .select("*, profiles!user_id(display_name)")
     .eq("event_id", event.id)
     .order("uploaded_at", { ascending: false });
 
