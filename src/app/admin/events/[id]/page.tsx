@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getSiteUrl } from "@/lib/site-url";
-import { PHOTO_SIGNED_URL_TTL_SECONDS } from "@/lib/storage";
+import { getPrivatePhotoUrl } from "@/lib/private-photo";
 import { EventMembersManager } from "@/components/admin/event-members-manager";
 import { RemoveMemberButton } from "@/components/admin/remove-member-button";
 import { EditEventForm } from "@/components/admin/edit-event-form";
@@ -24,10 +24,7 @@ export default async function AdminEventDetailPage({
 
   let coverImageUrl: string | null = null;
   if (event.cover_image_path) {
-    const { data: signed } = await supabase.storage
-      .from("event-photos")
-      .createSignedUrl(event.cover_image_path, PHOTO_SIGNED_URL_TTL_SECONDS);
-    coverImageUrl = signed?.signedUrl ?? null;
+    coverImageUrl = getPrivatePhotoUrl(event.cover_image_path);
   }
 
   const { data: members } = await supabase
