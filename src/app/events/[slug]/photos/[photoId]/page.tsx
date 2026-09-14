@@ -45,6 +45,7 @@ export default async function PhotoFullScreenPage({
     .createSignedUrl(photo.storage_display_path, 3600);
 
   const author = Array.isArray(photo.profiles) ? photo.profiles[0]?.display_name : photo.profiles?.display_name;
+  const isOwner = photo.user_id === user.id;
 
   return (
     <AppShell>
@@ -70,6 +71,7 @@ export default async function PhotoFullScreenPage({
                 photoId={photo.id}
                 storagePath={photo.storage_original_path}
                 eventSlug={slug}
+                isOwner={isOwner}
               />
             </div>
           </div>

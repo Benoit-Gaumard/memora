@@ -9,13 +9,19 @@ export function DeletePhotoButton({
   photoId,
   storagePath,
   eventSlug,
+  isOwner,
 }: {
   photoId: string;
   storagePath: string;
   eventSlug: string;
+  isOwner: boolean;
 }) {
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+
+  if (!isOwner) {
+    return null;
+  }
 
   async function handleDelete() {
     if (!window.confirm("Supprimer cette photo ?")) return;
