@@ -57,6 +57,10 @@ zones de danger (suppression définitive).
 - `.modal` : `<dialog>` natif servant de cadre transparent, backdrop encre floutée ; le contenu
   est une `.paper` ordinaire. Toujours `<dialog>`, jamais un overlay maison ni `window.confirm`.
   Une suppression définitive se confirme en tapant le nom exact de l'objet.
+- `.skeleton` : balayage clair sur le fond grape d'un cadre photo, le temps que la vignette
+  arrive. L'image se pose par-dessus, donc rien à piloter en JavaScript. Une galerie ne
+  charge jamais l'original : la grille lit la vignette, la vue plein écran la version
+  d'affichage, et l'original ne sort que pour le téléchargement et le ZIP.
 - Tableaux d'administration : en-têtes triables (`SortableHeader`), chevron discret au repos,
   flèche pleine sur la colonne active, `aria-sort` porté par le `<th>`. Le tri se fait sur les
   lignes déjà chargées, sans aller-retour serveur, et les cellules vides finissent toujours en bas.

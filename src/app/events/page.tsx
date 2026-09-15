@@ -17,7 +17,7 @@ export default async function EventsPage() {
 
   const { data: memberships } = await supabase
     .from("event_members")
-    .select("events(*, event_members(count), photos(count))")
+    .select("events(*, event_members(count), photos(count), photo_comments(count))")
     .eq("user_id", user.id)
     .eq("status", "active");
 
@@ -49,6 +49,9 @@ export default async function EventsPage() {
               ? (event.event_members[0]?.count ?? 0)
               : 0;
             const photoCount = Array.isArray(event.photos) ? (event.photos[0]?.count ?? 0) : 0;
+            const commentCount = Array.isArray(event.photo_comments)
+              ? (event.photo_comments[0]?.count ?? 0)
+              : 0;
 
             return (
               <EventCard
@@ -56,6 +59,7 @@ export default async function EventsPage() {
                 event={event}
                 memberCount={memberCount}
                 photoCount={photoCount}
+                commentCount={commentCount}
                 coverImageUrl={coverUrls.get(event.id)}
               />
             );

@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { buildImageDerivatives, type ImageDerivative } from "@/lib/image-derivatives";
 
 export const PHOTOS_BUCKET = "event-photos";
 
@@ -10,31 +11,15 @@ async function computeChecksum(file: File): Promise<string> {
     .join("");
 }
 
-function readImageSize(file: File): Promise<{ width: number; height: number } | null> {
-  if (!file.type.startsWith("image/")) {
-    return Promise.resolve(null);
-  }
-
-  return new Promise((resolve) => {
-    const url = URL.createObjectURL(file);
-    const image = new Image();
-    image.onload = () => {
-      URL.revokeObjectURL(url);
-      resolve({ width: image.naturalWidth, height: image.naturalHeight });
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(url);
-      resolve(null);
-    };
-    image.src = url;
-  });
-}
-
 /**
  * Uploads a photo file to the shared "event-photos" storage bucket (under a
  * per-event folder) and records its metadata in the `photos` table. Both
  * steps are enforced server-side by RLS: the caller must be an active member
  * of the event.
+ *
+ * Trois objets partent dans le bucket : l'original intact, une version
+ * d'affichage et une vignette (voir `image-derivatives`). Les galeries ne
+ * lisent que la vignette, ce qui divise le poids d'une grille par vingt.
  */
 export async function uploadEventPhoto({
   eventId,
@@ -46,21 +31,50 @@ export async function uploadEventPhoto({
   file: File;
 }) {
   const extension = file.name.includes(".") ? file.name.split(".").pop() : "";
-  const storedFilename = `${crypto.randomUUID()}${extension ? `.${extension}` : ""}`;
+  const baseName = crypto.randomUUID();
+  const storedFilename = `${baseName}${extension ? `.${extension}` : ""}`;
   const storagePath = `${eventId}/${storedFilename}`;
 
-  const [checksum, dimensions] = await Promise.all([
+  const [checksum, derivatives] = await Promise.all([
     computeChecksum(file),
-    readImageSize(file),
+    buildImageDerivatives(file),
   ]);
 
+  const uploadedPaths: string[] = [];
+
   const { error: uploadError } = await supabase.storage
-    .from("event-photos")
+    .from(PHOTOS_BUCKET)
     .upload(storagePath, file, { contentType: file.type, upsert: false });
 
   if (uploadError) {
     return { error: uploadError };
   }
+
+  uploadedPaths.push(storagePath);
+
+  // Les dérivées sont un accélérateur, pas une exigence : si l'une d'elles
+  // échoue, on retombe sur l'original plutôt que de refuser la photo.
+  async function uploadDerivative(
+    derivative: ImageDerivative | null,
+    suffix: string,
+  ): Promise<string> {
+    if (!derivative) return storagePath;
+
+    const path = `${eventId}/${baseName}-${suffix}.${derivative.extension}`;
+    const { error } = await supabase.storage
+      .from(PHOTOS_BUCKET)
+      .upload(path, derivative.blob, { contentType: derivative.contentType, upsert: false });
+
+    if (error) return storagePath;
+
+    uploadedPaths.push(path);
+    return path;
+  }
+
+  const [displayPath, thumbnailPath] = await Promise.all([
+    uploadDerivative(derivatives.display, "display"),
+    uploadDerivative(derivatives.thumbnail, "thumb"),
+  ]);
 
   const { error: insertError } = await supabase.from("photos").insert({
     event_id: eventId,
@@ -68,19 +82,19 @@ export async function uploadEventPhoto({
     original_filename: file.name,
     stored_filename: storedFilename,
     storage_original_path: storagePath,
-    storage_display_path: storagePath,
-    storage_thumbnail_path: storagePath,
+    storage_display_path: displayPath,
+    storage_thumbnail_path: thumbnailPath,
     mime_type: file.type || "application/octet-stream",
     file_size: file.size,
-    width: dimensions?.width ?? null,
-    height: dimensions?.height ?? null,
+    width: derivatives.width,
+    height: derivatives.height,
     checksum,
     status: "ready",
   });
 
   if (insertError) {
     // Best-effort cleanup so we don't leave an orphaned file behind.
-    await supabase.storage.from("event-photos").remove([storagePath]);
+    await supabase.storage.from(PHOTOS_BUCKET).remove(uploadedPaths);
     return { error: insertError };
   }
 

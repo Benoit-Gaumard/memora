@@ -113,7 +113,11 @@ export default async function PhotoFullScreenPage({
               </a>
               <DeletePhotoButton
                 photoId={photo.id}
-                storagePath={photo.storage_original_path}
+                storagePaths={[
+                  photo.storage_original_path,
+                  photo.storage_display_path,
+                  photo.storage_thumbnail_path,
+                ]}
                 eventSlug={slug}
                 isOwner={isOwner}
               />
