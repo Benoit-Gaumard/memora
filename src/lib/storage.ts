@@ -135,6 +135,43 @@ export async function uploadEventCoverImage({
  * Best-effort: storage isn't covered by the DB's ON DELETE CASCADE, so this
  * must be called explicitly before/after deleting the event row.
  */
+/**
+ * Removes every stored file uploaded by a given user, across all events.
+ * Best-effort, and it must run *before* the matching `photos` rows disappear,
+ * since the storage paths only live on those rows.
+ */
+export async function deleteUserPhotoFiles(userId: string) {
+  const { data } = await supabase
+    .from("photos")
+    .select("storage_original_path, storage_display_path, storage_thumbnail_path")
+    .eq("user_id", userId);
+
+  const rows = (data ?? []) as Array<{
+    storage_original_path: string | null;
+    storage_display_path: string | null;
+    storage_thumbnail_path: string | null;
+  }>;
+
+  const paths = Array.from(
+    new Set(
+      rows.flatMap((row) => [
+        row.storage_original_path,
+        row.storage_display_path,
+        row.storage_thumbnail_path,
+      ]),
+    ),
+  ).filter((path): path is string => Boolean(path));
+
+  if (paths.length > 0) {
+    await supabase.storage.from(PHOTOS_BUCKET).remove(paths);
+  }
+}
+
+/**
+ * Removes every stored object under an event's folder (photos + cover image).
+ * Best-effort: storage isn't covered by the DB's ON DELETE CASCADE, so this
+ * must be called explicitly before/after deleting the event row.
+ */
 export async function deleteEventStorageFolder(eventId: string) {
   const { data: rootFiles } = await supabase.storage.from("event-photos").list(eventId);
   const { data: coverFiles } = await supabase.storage.from("event-photos").list(`${eventId}/cover`);

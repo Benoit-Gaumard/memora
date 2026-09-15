@@ -162,9 +162,6 @@ export default function HomePage() {
                 alt="Des amis qui célèbrent ensemble lors d’une fête"
                 className="h-[300px] w-full rounded-[18px] object-cover md:h-[360px]"
               />
-              <figcaption className="px-2 pb-1 pt-3 text-sm font-semibold text-ink-soft">
-                Exemple d’album : les photos déposées par les invités, réunies au même endroit.
-              </figcaption>
             </figure>
 
             <div className="mt-4 grid grid-cols-3 gap-3">
