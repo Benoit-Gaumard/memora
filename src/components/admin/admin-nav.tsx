@@ -9,6 +9,7 @@ const tabs = [
   { href: "/admin/events", label: "Événements" },
   { href: "/admin/users", label: "Utilisateurs" },
   { href: "/admin/photos", label: "Photos" },
+  { href: "/admin/comments", label: "Commentaires" },
 ];
 
 export function AdminNav() {

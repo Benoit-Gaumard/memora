@@ -61,6 +61,7 @@ export default async function AdminPhotosPage({
         eventName: eventName ?? "Événement",
         authorName: authorName ?? "Membre",
         url: getPrivatePhotoUrl(photo.storage_display_path),
+        thumbnailUrl: getPrivatePhotoUrl(photo.storage_thumbnail_path),
       };
     }),
   );
