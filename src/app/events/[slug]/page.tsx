@@ -65,41 +65,38 @@ export default async function EventDetailPage({
 
   return (
     <AppShell>
-      <section className="mb-6 overflow-hidden rounded-[32px] border border-[#f0d9bf] bg-white shadow-sm">
-        <div className="relative h-52 overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(244,177,120,0.7),_rgba(255,250,243,0.9)_55%,_rgba(255,250,243,1))] p-6 md:h-72">
+      <section className="paper mb-8 overflow-hidden p-0">
+        <div className="relative h-56 overflow-hidden border-b-2 border-ink bg-grape p-6 md:h-80">
           {coverImageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={coverImageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          ) : null}
+          ) : (
+            <div className="confetti absolute inset-0 opacity-70" />
+          )}
           {coverImageUrl ? (
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1d150f]/70 via-[#1d150f]/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1c0733]/85 via-[#1c0733]/20 to-transparent" />
           ) : null}
-          <div className="relative flex h-full flex-col justify-between">
-            <div className="flex items-center justify-between gap-3">
-              <div className="rounded-full bg-[#fff9f2] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#7d6052]">
-                {event.event_type}
-              </div>
-              <div className="rounded-full bg-[#fff9f2] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#7d6052]">
-                {event.status}
-              </div>
-            </div>
-
-            <div className="max-w-xl rounded-3xl bg-[#1f1b18]/65 p-4 text-white backdrop-blur-sm">
-              <div className="text-xs uppercase tracking-[0.2em] text-[#f3d3b0]">Événement</div>
-              <h1 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">{event.name}</h1>
-              <p className="mt-2 text-sm text-[#f4e9df]">{event.description}</p>
+          <div className="relative flex h-full flex-col justify-end">
+            <div className="max-w-2xl">
+              <h1 className="font-display text-[clamp(2rem,4.5vw,3.2rem)] font-extrabold leading-[0.95] text-white drop-shadow-[0_3px_0_rgba(28,7,51,0.9)]">
+                {event.name}
+              </h1>
+              <p className="mt-3 max-w-lg text-base leading-7 text-white/90 drop-shadow-[0_1px_2px_rgba(28,7,51,0.9)]">
+                {event.description}
+              </p>
             </div>
           </div>
         </div>
 
         <div className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap items-center gap-3 text-sm text-[#5f514b]">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#fff4e9] px-3 py-1.5">
-              <Camera className="h-4 w-4 text-[#d57f45]" />
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="chip">{event.event_type}</span>
+            <span className="chip">
+              <Camera className="h-3.5 w-3.5" />
               {formatDate(event.event_date)}
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#fff4e9] px-3 py-1.5">
-              <ImageIcon className="h-4 w-4 text-[#d57f45]" />
+            <span className="chip">
+              <ImageIcon className="h-3.5 w-3.5" />
               {photosWithUrls.length} photos
             </span>
           </div>
@@ -109,12 +106,10 @@ export default async function EventDetailPage({
       </section>
 
       <section className="space-y-6">
-        <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Galerie</div>
-
         <PhotoGrid eventSlug={event.slug} photos={photosWithUrls} />
 
-        <div className="text-sm text-[#655a54]">
-          Retour à la liste des <Link href="/events" className="font-semibold text-[#c47242]">événements</Link>.
+        <div className="text-base text-ink-soft">
+          Retour à la liste de <Link href="/events" className="paper-link">mes albums</Link>.
         </div>
       </section>
     </AppShell>

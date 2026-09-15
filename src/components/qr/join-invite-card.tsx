@@ -15,18 +15,16 @@ export function JoinInviteCard({ code, link }: { code: string; link: string }) {
   }, [link]);
 
   return (
-    <div className="rounded-3xl border border-[#f0d9bf] bg-white p-5 shadow-sm">
+    <div className="paper p-5">
       <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="text-xs uppercase tracking-[0.2em] text-[#8b7267]">Invitation</div>
-          <div className="mt-2 text-2xl font-black tracking-[0.2em] text-[#231d1a]">{code}</div>
+          <div className="font-display text-lg font-extrabold text-ink">Code d’invitation</div>
+          <div className="marker mt-1 text-2xl font-black tracking-[0.2em] text-ink">{code}</div>
         </div>
-        <div className="rounded-2xl bg-[#fff4e9] p-3 text-[#d57f45]">
-          <QrCode className="h-7 w-7" />
-        </div>
+        <QrCode className="h-7 w-7 text-fuchsia" />
       </div>
 
-      <div className="mt-5 flex items-center justify-center rounded-3xl bg-[#fffaf3] p-4">
+      <div className="mt-5 flex items-center justify-center rounded-2xl border-2 border-ink bg-white p-4">
         {image ? (
           <Image
             src={image}
@@ -34,17 +32,17 @@ export function JoinInviteCard({ code, link }: { code: string; link: string }) {
             width={176}
             height={176}
             unoptimized
-            className="h-44 w-44 rounded-2xl object-cover"
+            className="h-44 w-44 object-cover"
           />
         ) : null}
       </div>
 
-      <div className="mt-5 flex items-center justify-between rounded-2xl bg-[#fff5ed] p-3 text-sm text-[#4d4039]">
+      <div className="mt-5 flex items-center justify-between gap-3 text-sm text-ink-soft">
         <span className="truncate">{link}</span>
         <button
           type="button"
           onClick={() => navigator.clipboard.writeText(link)}
-          className="inline-flex items-center gap-2 rounded-full bg-[#f4b178] px-3 py-2 text-xs font-semibold text-white"
+          className="btn btn-sm btn-citron shrink-0"
         >
           <Copy className="h-3.5 w-3.5" />
           Copier

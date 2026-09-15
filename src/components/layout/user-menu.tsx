@@ -32,15 +32,12 @@ export function UserMenu() {
   }
 
   if (isLoading) {
-    return <div className="h-10 w-10 rounded-full bg-[#fff3e6]" />;
+    return <div className="h-10 w-10 rounded-full bg-white/20" />;
   }
 
   if (!session) {
     return (
-      <Link
-        href="/login"
-        className="rounded-full border border-[#d7b38f] bg-[#fff3e6] px-3 py-2 text-sm font-semibold text-[#3c2d26] transition hover:bg-[#fce7d3]"
-      >
+      <Link href="/login" className="btn btn-sm btn-citron">
         Se connecter
       </Link>
     );
@@ -57,21 +54,21 @@ export function UserMenu() {
       <button
         type="button"
         onClick={() => setIsOpen((value) => !value)}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f4b178] text-sm font-bold text-white shadow-sm transition hover:bg-[#e6995b]"
+        className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-ink bg-fuchsia font-display text-sm font-extrabold text-ink shadow-[0_3px_0_var(--ink)] transition hover:bg-citron"
         aria-label="Mon compte"
       >
         {initial}
       </button>
 
       {isOpen ? (
-        <div className="absolute right-0 z-50 mt-2 w-48 rounded-2xl border border-[#f0d9bf] bg-white p-2 shadow-lg">
-          <div className="truncate px-3 py-2 text-sm font-semibold text-[#3c2d26]">
+        <div className="absolute right-0 z-50 mt-2 w-52 rounded-2xl border-2 border-ink bg-white p-2 shadow-[0_5px_0_var(--ink)]">
+          <div className="truncate px-3 py-2 font-display text-sm font-bold text-ink">
             {displayName}
           </div>
           <Link
             href="/profile"
             onClick={() => setIsOpen(false)}
-            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-[#5c4f46] transition hover:bg-[#fff3e6]"
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-ink transition hover:bg-citron"
           >
             <User className="h-4 w-4" />
             Mon profil
@@ -79,7 +76,7 @@ export function UserMenu() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-[#5c4f46] transition hover:bg-[#fff3e6]"
+            className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm font-semibold text-ink transition hover:bg-citron"
           >
             <LogOut className="h-4 w-4" />
             Se déconnecter

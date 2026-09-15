@@ -33,13 +33,12 @@ export default async function EventsPage() {
 
   return (
     <AppShell>
-      <div className="mb-6">
-        <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Mes événements</div>
-        <h1 className="mt-3 text-4xl font-black tracking-tight text-[#201c1a]">Toutes mes galeries</h1>
+      <div className="mb-8">
+        <h1 className="display text-[clamp(2.2rem,5vw,3.4rem)]">Mes albums de fête</h1>
       </div>
 
       {events.length ? (
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {events.map((event) => {
             const memberCount = Array.isArray(event.event_members)
               ? (event.event_members[0]?.count ?? 0)
@@ -58,8 +57,12 @@ export default async function EventsPage() {
           })}
         </div>
       ) : (
-        <div className="rounded-3xl border border-dashed border-[#f0d9bf] bg-[#fffaf3] p-8 text-center text-[#544a44]">
-          Vous ne faites encore partie d’aucun événement. Utilisez un lien d’invitation pour en rejoindre un.
+        <div className="paper p-8 text-center">
+          <div className="display-sm text-2xl">Pas encore d’album à votre nom.</div>
+          <p className="mt-3 text-base leading-7 text-ink-soft">
+            Ouvrez le lien ou scannez le QR code d’invitation que l’organisateur vous a envoyé pour
+            rejoindre sa fête.
+          </p>
         </div>
       )}
     </AppShell>

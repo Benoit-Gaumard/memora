@@ -1,14 +1,53 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Memora — monde visuel « cotillons en papier »
+   Papier plat saturé, bords découpés et festonnés, franges de crépon,
+   serpentins et confettis. Les aplats de couleur portent toujours l'encre
+   prune : c'est la règle de contraste du système.
+--------------------------------------------------------------------------- */
+
 :root {
-  --background: #fffaf3;
-  --foreground: #1f1b18;
+  --paper: #fdf5ff;
+  --paper-warm: #fffdf7;
+  --ink: #240b3b;
+  --ink-soft: #5a4270;
+  --ink-faint: #8a76a3;
+
+  --fuchsia: #ff2e88;
+  --mandarine: #ff7a2f;
+  --turquoise: #00bfa6;
+  --raisin: #6b2cf5;
+  --citron: #ffc93c;
+  --grape: #2a0e4f;
+  --grape-deep: #1c0733;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+
+  --shadow-paper: 0 2px 0 rgba(36, 11, 59, 0.06), 0 18px 32px -20px rgba(36, 11, 59, 0.55);
+  --shadow-paper-lift: 0 3px 0 rgba(36, 11, 59, 0.08), 0 26px 44px -22px rgba(36, 11, 59, 0.6);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Avenir Next", "Segoe UI", sans-serif;
+
+  --color-paper: var(--paper);
+  --color-paper-warm: var(--paper-warm);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-fuchsia: var(--fuchsia);
+  --color-mandarine: var(--mandarine);
+  --color-turquoise: var(--turquoise);
+  --color-raisin: var(--raisin);
+  --color-citron: var(--citron);
+  --color-grape: var(--grape);
+  --color-grape-deep: var(--grape-deep);
+
+  --font-sans: var(--font-text), "Segoe UI", sans-serif;
+  --font-display: var(--font-display), "Segoe UI", sans-serif;
   --font-mono: "SFMono-Regular", "Consolas", monospace;
 }
 
@@ -17,9 +56,9 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text), "Segoe UI", sans-serif;
 }
 
 * {
@@ -31,6 +70,292 @@ a {
 }
 
 button,
-input {
+input,
+textarea,
+select {
   font: inherit;
+}
+
+::selection {
+  background: var(--citron);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--fuchsia);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@layer components {
+  /* --- Titres découpés ---------------------------------------------------- */
+  .display {
+    font-family: var(--font-display), "Segoe UI", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.92;
+    text-wrap: balance;
+  }
+
+  .display-sm {
+    font-family: var(--font-display), "Segoe UI", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  /* Mot surligné au marqueur, comme un feutre sur du papier. */
+  .marker {
+    position: relative;
+    display: inline-block;
+    padding-inline: 0.18em;
+    color: var(--ink);
+    isolation: isolate;
+  }
+
+  .marker::before {
+    content: "";
+    position: absolute;
+    inset: 0.1em -0.06em 0.08em -0.06em;
+    background: var(--citron);
+    border-radius: 0.35em 0.6em 0.4em 0.5em;
+    transform: rotate(-1.2deg);
+    z-index: -1;
+  }
+
+  /* --- Papier ------------------------------------------------------------- */
+  .paper {
+    background: #fff;
+    border: 2px solid var(--ink);
+    border-radius: 26px;
+    box-shadow: var(--shadow-paper);
+  }
+
+  .paper-tilt {
+    transform: rotate(-1.1deg);
+  }
+
+  .paper-tilt-alt {
+    transform: rotate(1.4deg);
+  }
+
+  .paper-link {
+    transition:
+      transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .paper-link:hover {
+    transform: translateY(-4px) rotate(-0.6deg);
+    box-shadow: var(--shadow-paper-lift);
+  }
+
+  /* Bord inférieur festonné, comme une carte découpée aux ciseaux cranteurs. */
+  .scallop-bottom {
+    -webkit-mask-image:
+      radial-gradient(circle at 9px 9px, transparent 9px, #000 9.5px),
+      linear-gradient(#000, #000);
+    mask-image:
+      radial-gradient(circle at 9px 9px, transparent 9px, #000 9.5px),
+      linear-gradient(#000, #000);
+    -webkit-mask-size: 18px 18px, 100% calc(100% - 9px);
+    mask-size: 18px 18px, 100% calc(100% - 9px);
+    -webkit-mask-position: bottom left, top left;
+    mask-position: bottom left, top left;
+    -webkit-mask-repeat: repeat-x, no-repeat;
+    mask-repeat: repeat-x, no-repeat;
+  }
+
+  /* --- Frange de papier crépon ------------------------------------------- */
+  .fringe {
+    height: 22px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--fuchsia) 0 14px,
+      var(--citron) 14px 28px,
+      var(--turquoise) 28px 42px,
+      var(--mandarine) 42px 56px,
+      var(--raisin) 56px 70px
+    );
+    -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px);
+    mask-image: repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px);
+  }
+
+  /* --- Confettis ---------------------------------------------------------- */
+  .confetti {
+    background-image:
+      radial-gradient(circle at 12% 18%, var(--citron) 0 5px, transparent 5px),
+      radial-gradient(circle at 78% 12%, var(--turquoise) 0 4px, transparent 4px),
+      radial-gradient(circle at 32% 72%, var(--fuchsia) 0 4px, transparent 4px),
+      radial-gradient(circle at 88% 62%, var(--mandarine) 0 5px, transparent 5px),
+      radial-gradient(circle at 58% 34%, var(--raisin) 0 3px, transparent 3px),
+      radial-gradient(circle at 6% 88%, var(--turquoise) 0 3px, transparent 3px),
+      radial-gradient(circle at 46% 6%, var(--mandarine) 0 3px, transparent 3px),
+      radial-gradient(circle at 94% 88%, var(--citron) 0 4px, transparent 4px);
+    background-size: 340px 300px;
+    background-repeat: repeat;
+  }
+
+  /* --- Boutons ------------------------------------------------------------ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    font-family: var(--font-display), "Segoe UI", sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    background: #fff;
+    border: 2px solid var(--ink);
+    box-shadow: 0 4px 0 var(--ink);
+    transition:
+      transform 0.12s ease-out,
+      box-shadow 0.12s ease-out,
+      background-color 0.2s ease-out;
+  }
+
+  .btn:hover {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--ink);
+  }
+
+  .btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 var(--ink);
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.55;
+    transform: none;
+    box-shadow: 0 4px 0 var(--ink);
+    cursor: not-allowed;
+  }
+
+  .btn-fuchsia {
+    background: var(--fuchsia);
+  }
+
+  .btn-citron {
+    background: var(--citron);
+  }
+
+  .btn-turquoise {
+    background: var(--turquoise);
+  }
+
+  .btn-mandarine {
+    background: var(--mandarine);
+  }
+
+  .btn-ghost {
+    background: #fff;
+  }
+
+  .btn-sm {
+    padding: 0.5rem 0.95rem;
+    font-size: 0.8rem;
+    box-shadow: 0 3px 0 var(--ink);
+  }
+
+  .btn-sm:hover {
+    box-shadow: 0 1px 0 var(--ink);
+  }
+
+  .btn-sm:active {
+    box-shadow: 0 0 0 var(--ink);
+  }
+
+  /* --- Étiquettes --------------------------------------------------------- */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    background: #fff;
+    font-family: var(--font-display), "Segoe UI", sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--ink);
+  }
+
+  .chip-night {
+    background: transparent;
+    border-color: #7b5ea4;
+    color: #fff;
+  }
+
+  /* --- Champs ------------------------------------------------------------- */
+  .field {
+    width: 100%;
+    border-radius: 16px;
+    border: 2px solid rgba(36, 11, 59, 0.18);
+    background: #fff;
+    padding: 0.7rem 0.9rem;
+    color: var(--ink);
+    transition:
+      border-color 0.18s ease-out,
+      box-shadow 0.18s ease-out;
+  }
+
+  .field::placeholder {
+    color: var(--ink-faint);
+  }
+
+  .field:focus {
+    outline: none;
+    border-color: var(--fuchsia);
+    box-shadow: 0 0 0 4px rgba(255, 46, 136, 0.18);
+  }
+
+  /* --- Ruban adhésif ------------------------------------------------------ */
+  .tape {
+    position: absolute;
+    width: 118px;
+    height: 30px;
+    background: rgba(255, 201, 60, 0.85);
+    box-shadow: 0 1px 0 rgba(36, 11, 59, 0.12);
+    -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 6px, rgba(0, 0, 0, 0.82) 6px 12px);
+    mask-image: repeating-linear-gradient(90deg, #000 0 6px, rgba(0, 0, 0, 0.82) 6px 12px);
+  }
+
+  /* --- Le moment animé : les photos éparpillées se rangent en album ------- */
+  .settle {
+    animation: settle 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes settle {
+    from {
+      transform: translate3d(var(--from-x, 0), var(--from-y, -28px), 0)
+        rotate(var(--from-rot, -12deg));
+      filter: blur(6px);
+      opacity: 0;
+    }
+    to {
+      transform: translate3d(0, 0, 0) rotate(var(--to-rot, 0deg));
+      filter: blur(0);
+      opacity: 1;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .settle {
+    animation: none;
+    transform: rotate(var(--to-rot, 0deg));
+  }
+
+  .paper-link:hover {
+    transform: none;
+  }
 }

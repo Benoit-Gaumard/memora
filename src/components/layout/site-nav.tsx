@@ -11,7 +11,7 @@ export function SiteNav() {
   return (
     <>
       {navItems.map((item) => (
-        <Link key={item.href} href={item.href} className="transition hover:text-[#1f1b18]">
+        <Link key={item.href} href={item.href} className="transition hover:text-citron">
           {item.label}
         </Link>
       ))}

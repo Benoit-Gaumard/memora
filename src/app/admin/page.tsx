@@ -32,57 +32,57 @@ export default async function AdminDashboard() {
     <>
       <div className="grid gap-4 md:grid-cols-3">
         {stats.map(({ label, value, icon: Icon }) => (
-          <div key={label} className="rounded-3xl border border-[#f0d9bf] bg-white p-5 shadow-sm">
-            <div className="w-fit rounded-2xl bg-[#fff4e9] p-2 text-[#d57f45]">
+          <div key={label} className="paper p-5">
+            <div className="w-fit text-fuchsia">
               <Icon className="h-5 w-5" />
             </div>
-            <div className="mt-6 text-3xl font-black text-[#201c1a]">{value}</div>
-            <div className="mt-2 text-sm text-[#5a4d47]">{label}</div>
+            <div className="mt-4 font-display text-4xl font-extrabold text-ink">{value}</div>
+            <div className="mt-2 text-sm text-ink-soft">{label}</div>
           </div>
         ))}
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <div className="rounded-[32px] border border-[#f0d9bf] bg-white p-5 shadow-sm">
+        <div className="paper p-5">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-[#d57f45]">
+            <div className="flex items-center gap-2 text-fuchsia">
               <Shield className="h-5 w-5" />
-              <h2 className="text-lg font-bold text-[#241e1a]">Derniers inscrits</h2>
+              <h2 className="font-display text-lg font-extrabold text-ink">Derniers inscrits</h2>
             </div>
-            <Link href="/admin/users" className="text-sm font-semibold text-[#c47242]">
+            <Link href="/admin/users" className="text-sm font-semibold text-fuchsia">
               Voir tout
             </Link>
           </div>
 
-          <div className="mt-4 space-y-3 text-sm text-[#5a4d47]">
+          <div className="mt-4 divide-y-2 divide-dashed divide-ink/15 text-sm text-ink-soft">
             {recentUsers.data?.length ? (
               recentUsers.data.map((user) => (
-                <div key={user.id} className="flex items-center justify-between rounded-2xl bg-[#fff9f3] p-3">
+                <div key={user.id} className="flex items-center justify-between gap-3 py-2">
                   <div>
-                    <div className="font-semibold text-[#241e1a]">{user.display_name}</div>
-                    <div className="text-xs text-[#8a7268]">{user.email ?? user.username}</div>
+                    <div className="font-semibold text-ink">{user.display_name}</div>
+                    <div className="text-xs text-ink-faint">{user.email ?? user.username}</div>
                   </div>
-                  <div className="text-xs text-[#8a7268]">{formatShortDate(user.created_at)}</div>
+                  <div className="text-xs text-ink-faint">{formatShortDate(user.created_at)}</div>
                 </div>
               ))
             ) : (
-              <div className="rounded-2xl bg-[#fff9f3] p-3 text-[#8a7268]">Aucun inscrit pour le moment.</div>
+              <div className="py-2 text-ink-faint">Aucun inscrit pour le moment.</div>
             )}
           </div>
         </div>
 
-        <div className="rounded-[32px] border border-[#f0d9bf] bg-white p-5 shadow-sm">
+        <div className="paper p-5">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-[#d57f45]">
+            <div className="flex items-center gap-2 text-fuchsia">
               <ImageIcon className="h-5 w-5" />
-              <h2 className="text-lg font-bold text-[#241e1a]">Dernières photos</h2>
+              <h2 className="font-display text-lg font-extrabold text-ink">Dernières photos</h2>
             </div>
-            <Link href="/admin/photos" className="text-sm font-semibold text-[#c47242]">
+            <Link href="/admin/photos" className="text-sm font-semibold text-fuchsia">
               Voir tout
             </Link>
           </div>
 
-          <div className="mt-4 space-y-3 text-sm text-[#5a4d47]">
+          <div className="mt-4 divide-y-2 divide-dashed divide-ink/15 text-sm text-ink-soft">
             {recentPhotos.data?.length ? (
               recentPhotos.data.map((photo) => {
                 const eventName = Array.isArray(photo.events)
@@ -93,21 +93,21 @@ export default async function AdminDashboard() {
                   : (photo.profiles as { display_name?: string } | null)?.display_name;
 
                 return (
-                  <div key={photo.id} className="flex items-center justify-between rounded-2xl bg-[#fff9f3] p-3">
+                  <div key={photo.id} className="flex items-center justify-between gap-3 py-2">
                     <div>
-                      <div className="font-semibold text-[#241e1a]">{photo.original_filename}</div>
-                      <div className="text-xs text-[#8a7268]">
+                      <div className="font-semibold text-ink">{photo.original_filename}</div>
+                      <div className="text-xs text-ink-faint">
                         {eventName ?? "Événement"} · {authorName ?? "Membre"}
                       </div>
                     </div>
-                    <div className="text-xs text-[#8a7268]">
+                    <div className="text-xs text-ink-faint">
                       {photo.uploaded_at ? formatShortDate(photo.uploaded_at) : ""}
                     </div>
                   </div>
                 );
               })
             ) : (
-              <div className="rounded-2xl bg-[#fff9f3] p-3 text-[#8a7268]">Aucune photo pour le moment.</div>
+              <div className="py-2 text-ink-faint">Aucune photo pour le moment.</div>
             )}
           </div>
         </div>

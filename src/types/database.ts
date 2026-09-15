@@ -88,6 +88,16 @@ export interface PhotoRecord {
   updated_at: string;
 }
 
+export interface PhotoComment {
+  id: string;
+  photo_id: string;
+  event_id: string;
+  user_id: string;
+  body: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AuditLog {
   id: string;
   actor_user_id: string;
@@ -107,6 +117,7 @@ export interface Database {
       event_invites: { Row: EventInvite };
       event_members: { Row: EventMember };
       photos: { Row: PhotoRecord };
+      photo_comments: { Row: PhotoComment };
       audit_logs: { Row: AuditLog };
     };
   };

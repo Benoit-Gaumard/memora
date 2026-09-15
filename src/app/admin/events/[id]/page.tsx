@@ -67,27 +67,26 @@ export default async function AdminEventDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-[32px] border border-[#f0d9bf] bg-white p-6 shadow-sm md:p-8">
+      <div className="paper p-6 md:p-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Événement</div>
-            <h2 className="mt-3 text-4xl font-black tracking-tight text-[#201c1a]">{event.name}</h2>
+            <h2 className="display text-[clamp(2.2rem,5vw,3.4rem)]">{event.name}</h2>
           </div>
           <DeleteEventButton eventId={event.id} eventName={event.name} />
         </div>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
+        <dl className="mt-6 grid gap-4 sm:grid-cols-3">
           {[
             ["Membres", String(members?.length ?? 0)],
             ["Photos", String(photoCount ?? 0)],
             ["Téléchargement", event.download_enabled ? "Oui" : "Non"],
           ].map(([label, value]) => (
-            <div key={String(label)} className="rounded-2xl bg-[#fff5ed] p-4">
-              <div className="text-sm text-[#7d675d]">{label}</div>
-              <div className="mt-2 text-lg font-bold text-[#241e1a]">{value}</div>
+            <div key={String(label)}>
+              <dt className="text-base font-semibold text-ink-soft">{label}</dt>
+              <dd className="mt-1 font-display text-2xl font-extrabold text-ink">{value}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </div>
 
       <EditEventForm
@@ -104,16 +103,16 @@ export default async function AdminEventDetailPage({
       />
 
       <div>
-        <h3 className="mb-3 text-lg font-bold text-[#241e1a]">Lien d’invitation</h3>
+        <h3 className="mb-3 font-display text-lg font-extrabold text-ink">Lien d’invitation</h3>
         <EventInviteManager eventId={event.id} existingCode={invite?.code ?? null} siteUrl={siteUrl} />
       </div>
 
       <EventMembersManager eventId={event.id} candidates={candidates} />
 
-      <div className="overflow-hidden rounded-[32px] border border-[#f0d9bf] bg-white shadow-sm">
-        <div className="border-b border-[#f4e5d3] px-5 py-4 text-lg font-bold text-[#241e1a]">Membres</div>
-        <table className="min-w-full text-left text-sm text-[#4d4039]">
-          <thead className="bg-[#fff5ed] text-[#786860]">
+      <div className="overflow-hidden paper p-0">
+        <div className="border-b border-ink/15 px-5 py-4 font-display text-lg font-extrabold text-ink">Membres</div>
+        <table className="min-w-full text-left text-sm text-ink-soft">
+          <thead className="bg-paper text-ink-soft">
             <tr>
               {["Nom", "Adresse e-mail", "Rôle", "Statut", ""].map((header) => (
                 <th key={header} className="px-4 py-3 font-semibold">
@@ -128,8 +127,8 @@ export default async function AdminEventDetailPage({
                 const profile = Array.isArray(member.profiles) ? member.profiles[0] : member.profiles;
 
                 return (
-                  <tr key={member.id} className="border-t border-[#f4e5d3]">
-                    <td className="px-4 py-4 font-semibold text-[#221d1a]">
+                  <tr key={member.id} className="border-t border-ink/15">
+                    <td className="px-4 py-4 font-semibold text-ink">
                       {profile?.display_name ?? profile?.username}
                     </td>
                     <td className="px-4 py-4">{profile?.email}</td>
@@ -143,7 +142,7 @@ export default async function AdminEventDetailPage({
               })
             ) : (
               <tr>
-                <td colSpan={5} className="px-4 py-6 text-center text-[#8a7268]">
+                <td colSpan={5} className="px-4 py-6 text-center text-ink-faint">
                   Aucun membre pour le moment.
                 </td>
               </tr>

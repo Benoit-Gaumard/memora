@@ -85,14 +85,14 @@ export function EventMembersManager({
   }
 
   return (
-    <div className="rounded-[32px] border border-[#f0d9bf] bg-white p-5 shadow-sm">
+    <div className="paper p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="text-lg font-bold text-[#241e1a]">Ajouter des membres</div>
+        <div className="font-display text-lg font-extrabold text-ink">Ajouter des membres</div>
         <input
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Rechercher un utilisateur…"
-          className="w-full max-w-xs rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2 text-sm outline-none transition focus:border-[#e38a52]"
+          className="field max-w-xs"
         />
       </div>
 
@@ -108,20 +108,20 @@ export function EventMembersManager({
         </div>
       ) : null}
 
-      <div className="mt-4 max-h-80 overflow-y-auto rounded-2xl border border-[#f4e5d3]">
+      <div className="mt-4 max-h-80 overflow-y-auto rounded-2xl border border-ink/15">
         {filtered.length ? (
-          <ul className="divide-y divide-[#f4e5d3]">
+          <ul className="divide-y divide-ink/15">
             {filtered.map((candidate) => (
               <li key={candidate.id} className="flex items-center gap-3 px-4 py-3">
                 <input
                   type="checkbox"
                   checked={selected.has(candidate.id)}
                   onChange={() => toggle(candidate.id)}
-                  className="h-4 w-4 rounded border-[#eed8bd] text-[#d38656] focus:ring-[#e38a52]"
+                  className="h-4 w-4 rounded border-2 border-ink accent-[color:var(--fuchsia)]"
                 />
                 <div>
-                  <div className="text-sm font-semibold text-[#221d1a]">{candidate.displayName}</div>
-                  <div className="text-xs text-[#8a7268]">
+                  <div className="text-sm font-semibold text-ink">{candidate.displayName}</div>
+                  <div className="text-xs text-ink-faint">
                     {candidate.username}
                     {candidate.email ? ` · ${candidate.email}` : ""}
                   </div>
@@ -130,7 +130,7 @@ export function EventMembersManager({
             ))}
           </ul>
         ) : (
-          <div className="px-4 py-6 text-center text-sm text-[#8a7268]">
+          <div className="px-4 py-6 text-center text-sm text-ink-faint">
             {candidates.length === 0
               ? "Tous les utilisateurs sont déjà membres de cet événement."
               : "Aucun utilisateur ne correspond à cette recherche."}
@@ -142,7 +142,7 @@ export function EventMembersManager({
         type="button"
         onClick={handleAdd}
         disabled={submitting || selected.size === 0}
-        className="mt-4 rounded-full bg-[#f4b178] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#e6995b] disabled:opacity-60"
+        className="mt-4 btn btn-fuchsia disabled:opacity-60"
       >
         {submitting
           ? "Ajout en cours…"

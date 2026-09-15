@@ -52,25 +52,24 @@ export default async function JoinCodePage({
   return (
     <AppShell>
       <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[1fr_0.9fr]">
-        <div className="rounded-[32px] border border-[#f0d9bf] bg-white p-6 shadow-sm md:p-8">
-          <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Invitation valide</div>
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-[#211d1b]">{invite.event_name}</h1>
-          <p className="mt-3 text-base leading-7 text-[#5f514b]">{invite.event_description}</p>
+        <div className="paper p-6 md:p-8">
+          <h1 className="display text-[clamp(2.2rem,5vw,3.4rem)]">{invite.event_name}</h1>
+          <p className="mt-3 text-base leading-7 text-ink-soft">{invite.event_description}</p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl bg-[#fff6ee] p-4 text-sm text-[#4a3c35]">
-              <div className="flex items-center gap-2 text-[#8a5d38]">
-                <CalendarDays className="h-4 w-4" />
+            <div className="text-base text-ink-soft">
+              <div className="flex items-center gap-2 font-display font-bold text-ink">
+                <CalendarDays className="h-4 w-4 text-fuchsia" />
                 Date
               </div>
-              <div className="mt-2 font-semibold">{formatDate(invite.event_date)}</div>
+              <div className="mt-1">{formatDate(invite.event_date)}</div>
             </div>
-            <div className="rounded-2xl bg-[#fff6ee] p-4 text-sm text-[#4a3c35]">
-              <div className="flex items-center gap-2 text-[#8a5d38]">
-                <Users className="h-4 w-4" />
+            <div className="text-base text-ink-soft">
+              <div className="flex items-center gap-2 font-display font-bold text-ink">
+                <Users className="h-4 w-4 text-turquoise" />
                 Invités
               </div>
-              <div className="mt-2 font-semibold">
+              <div className="mt-1">
                 {invite.current_uses}
                 {invite.max_uses ? `/${invite.max_uses}` : ""} inscrit(s)
               </div>
@@ -81,7 +80,7 @@ export default async function JoinCodePage({
             <JoinActionButton code={code} isLoggedIn={Boolean(user)} eventSlug={invite.event_slug} />
             <Link
               href="/events"
-              className="rounded-full border border-[#efceaa] bg-white px-5 py-3 text-sm font-semibold text-[#433a35] transition hover:bg-[#fff5ec]"
+              className="btn btn-ghost"
             >
               Voir mes événements
             </Link>

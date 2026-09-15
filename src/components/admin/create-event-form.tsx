@@ -111,24 +111,24 @@ export function CreateEventForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mb-6 grid gap-4 rounded-[32px] border border-[#f0d9bf] bg-white p-5 shadow-sm md:grid-cols-2"
+      className="mb-6 grid gap-4 paper p-5 md:grid-cols-2"
     >
-      <label className="block text-sm font-medium text-[#493d36]">
+      <label className="block text-sm font-medium text-ink-soft">
         Nom de l’événement
         <input
           required
           value={name}
           onChange={(event) => setName(event.target.value)}
-          className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none transition focus:border-[#e38a52]"
+          className="field mt-2"
         />
       </label>
 
-      <label className="block text-sm font-medium text-[#493d36]">
+      <label className="block text-sm font-medium text-ink-soft">
         Type
         <select
           value={eventType}
           onChange={(event) => setEventType(event.target.value)}
-          className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none transition focus:border-[#e38a52]"
+          className="field mt-2"
         >
           <option>Mariage</option>
           <option>Anniversaire</option>
@@ -137,24 +137,24 @@ export function CreateEventForm() {
         </select>
       </label>
 
-      <label className="block text-sm font-medium text-[#493d36]">
+      <label className="block text-sm font-medium text-ink-soft">
         Date
         <input
           required
           type="date"
           value={eventDate}
           onChange={(event) => setEventDate(event.target.value)}
-          className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none transition focus:border-[#e38a52]"
+          className="field mt-2"
         />
       </label>
 
-      <label className="block text-sm font-medium text-[#493d36] md:col-span-2">
+      <label className="block text-sm font-medium text-ink-soft md:col-span-2">
         Description
         <textarea
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           rows={2}
-          className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none transition focus:border-[#e38a52]"
+          className="field mt-2"
         />
       </label>
 
@@ -174,7 +174,7 @@ export function CreateEventForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-full bg-[#f4b178] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#e6995b] disabled:opacity-60"
+          className="btn btn-fuchsia disabled:opacity-60"
         >
           {submitting ? "Création…" : "+ Créer un événement"}
         </button>

@@ -1,5 +1,19 @@
 import type { Metadata } from "next";
+import { Bricolage_Grotesque, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
+
+const display = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["600", "700", "800"],
+  display: "swap",
+});
+
+const text = Hanken_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-text",
+  display: "swap",
+});
 
 const siteUrl = "https://memora-taupe-eta.vercel.app";
 
@@ -37,8 +51,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className="h-full antialiased">
-      <body className="min-h-full bg-[#fffaf3] text-[#1f1b18]">{children}</body>
+    <html lang="fr" className={`h-full antialiased ${display.variable} ${text.variable}`}>
+      <body className="min-h-full bg-paper text-ink">{children}</body>
     </html>
   );
 }

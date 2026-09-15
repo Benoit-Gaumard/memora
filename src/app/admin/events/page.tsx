@@ -22,9 +22,9 @@ export default async function AdminEventsPage() {
     <>
       <CreateEventForm />
 
-      <div className="overflow-hidden rounded-[32px] border border-[#f0d9bf] bg-white shadow-sm">
-        <table className="min-w-full text-left text-sm text-[#4d4039]">
-          <thead className="bg-[#fff5ed] text-[#786860]">
+      <div className="overflow-hidden paper p-0">
+        <table className="min-w-full text-left text-sm text-ink-soft">
+          <thead className="bg-paper text-ink-soft">
             <tr>
               {["", "Nom", "Type", "Date", "Statut", "Membres", "Photos", ""].map((header) => (
                 <th key={header} className="px-4 py-3 font-semibold">
@@ -43,16 +43,16 @@ export default async function AdminEventsPage() {
                 const coverUrl = coverUrls.get(event.id);
 
                 return (
-                  <tr key={event.id} className="border-t border-[#f4e5d3]">
+                  <tr key={event.id} className="border-t border-ink/15">
                     <td className="px-4 py-4">
-                      <div className="h-12 w-16 overflow-hidden rounded-xl border border-[#eed8bd] bg-[#fff5ed]">
+                      <div className="h-12 w-16 overflow-hidden rounded-xl border border-ink/15 bg-paper">
                         {coverUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={coverUrl} alt="" className="h-full w-full object-cover" />
                         ) : null}
                       </div>
                     </td>
-                    <td className="px-4 py-4 font-semibold text-[#221d1a]">
+                    <td className="px-4 py-4 font-semibold text-ink">
                       <Link href={`/admin/events/${event.id}`} className="hover:underline">
                         {event.name}
                       </Link>
@@ -70,7 +70,7 @@ export default async function AdminEventsPage() {
               })
             ) : (
               <tr>
-                <td colSpan={8} className="px-4 py-6 text-center text-[#8a7268]">
+                <td colSpan={8} className="px-4 py-6 text-center text-ink-faint">
                   Aucun événement créé pour le moment.
                 </td>
               </tr>

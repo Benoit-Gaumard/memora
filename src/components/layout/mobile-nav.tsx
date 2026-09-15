@@ -29,7 +29,7 @@ export function MobileNav() {
       <button
         type="button"
         onClick={() => setIsOpen((value) => !value)}
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-[#efd9bf] bg-white text-[#3c2d26] shadow-sm transition hover:bg-[#fff3e6]"
+        className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-ink bg-white text-ink shadow-[0_3px_0_var(--ink)] transition hover:bg-citron"
         aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
         aria-expanded={isOpen}
       >
@@ -37,13 +37,13 @@ export function MobileNav() {
       </button>
 
       {isOpen ? (
-        <div className="absolute left-0 z-50 mt-2 w-44 rounded-2xl border border-[#f0d9bf] bg-white p-2 shadow-lg">
+        <div className="absolute left-0 z-50 mt-2 w-44 rounded-2xl border-2 border-ink bg-white p-2 shadow-[0_5px_0_var(--ink)]">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className="block rounded-xl px-3 py-2 text-sm font-medium text-[#5c4f46] transition hover:bg-[#fff3e6]"
+              className="block rounded-xl px-3 py-2 text-sm font-semibold text-ink transition hover:bg-citron"
             >
               {item.label}
             </Link>

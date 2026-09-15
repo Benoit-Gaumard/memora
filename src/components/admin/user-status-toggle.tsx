@@ -28,11 +28,7 @@ export function UserStatusToggle({ userId, status }: { userId: string; status: A
       type="button"
       onClick={handleToggle}
       disabled={submitting}
-      className={`rounded-full px-3 py-1.5 text-xs font-semibold transition disabled:opacity-60 ${
-        isBlocked
-          ? "bg-[#edf9ee] text-[#2c6c3f] hover:bg-[#dff2e1]"
-          : "bg-[#fff1de] text-[#a2662d] hover:bg-[#ffe6c6]"
-      }`}
+      className={`btn btn-sm ${isBlocked ? "btn-turquoise" : "btn-ghost"}`}
     >
       {submitting ? "…" : isBlocked ? "Réactiver" : "Bloquer"}
     </button>

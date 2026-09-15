@@ -12,21 +12,25 @@ export function PhotoGrid({
 }) {
   if (!photos.length) {
     return (
-      <div className="rounded-3xl border border-dashed border-[#f0d9bf] bg-[#fffaf3] p-8 text-center text-[#544a44]">
-        Aucune photo n’a encore été partagée dans cet événement.
+      <div className="paper p-8 text-center">
+        <div className="display-sm text-2xl">L’album est encore vide.</div>
+        <p className="mt-3 text-base leading-7 text-ink-soft">
+          Les photos déposées par les invités apparaîtront ici, de la plus récente à la plus ancienne.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-      {photos.map((photo) => (
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      {photos.map((photo, index) => (
         <Link
           key={photo.id}
           href={`/events/${eventSlug}/photos/${photo.id}`}
-          className="group overflow-hidden rounded-3xl border border-[#f0d9bf] bg-white shadow-sm"
+          className="paper group block p-2 transition hover:-translate-y-1"
+          style={{ rotate: `${(index % 4) - 1.5}deg` }}
         >
-          <div className="relative aspect-square overflow-hidden bg-[#f2ebdf]">
+          <div className="relative aspect-square overflow-hidden rounded-xl border-2 border-ink bg-grape">
             {photo.url ? (
               <Image
                 src={photo.url}
@@ -38,13 +42,12 @@ export function PhotoGrid({
               />
             ) : null}
           </div>
-          <div className="space-y-1 p-3">
-            <div className="text-sm font-medium text-[#2f2825]">{photo.original_filename}</div>
-            <div className="text-xs text-[#7c675d]">
-              {formatShortDate(photo.captured_at ?? photo.uploaded_at ?? photo.created_at)}
+          <div className="space-y-0.5 px-1 pb-1 pt-3">
+            <div className="font-display text-sm font-bold text-ink">
+              Ajoutée par {photo.authorName ?? "un invité"}
             </div>
-            <div className="text-xs font-medium text-[#a6623a]">
-              Ajoutée par {photo.authorName ?? "un membre"}
+            <div className="text-sm text-ink-soft">
+              {formatShortDate(photo.captured_at ?? photo.uploaded_at ?? photo.created_at)}
             </div>
           </div>
         </Link>

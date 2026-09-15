@@ -25,7 +25,7 @@ export function RemoveMemberButton({ memberId }: { memberId: string }) {
       type="button"
       onClick={handleRemove}
       disabled={submitting}
-      className="rounded-full bg-[#fdeceb] px-3 py-1.5 text-xs font-semibold text-[#b3392f] transition hover:bg-[#fbdedb] disabled:opacity-60"
+      className="btn btn-sm btn-ghost disabled:opacity-60"
     >
       {submitting ? "…" : "Retirer"}
     </button>
