@@ -1,6 +1,6 @@
 export type GlobalRole = "user" | "super_admin";
 export type AccountStatus = "active" | "blocked";
-export type EventStatus = "DRAFT" | "ACTIVE" | "CLOSED" | "ARCHIVED";
+export type EventStatus = "ACTIVE" | "CLOSED";
 export type EventMemberRole = "participant" | "organizer";
 export type EventMemberStatus = "pending" | "active" | "blocked" | "removed";
 export type PhotoStatus = "uploading" | "processing" | "ready" | "failed" | "deleted";

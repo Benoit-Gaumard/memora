@@ -59,7 +59,9 @@ export default async function AdminEventsPage() {
                     </td>
                     <td className="px-4 py-4">{event.event_type}</td>
                     <td className="px-4 py-4">{new Date(event.event_date).toLocaleDateString("fr-FR")}</td>
-                    <td className="px-4 py-4">{event.status}</td>
+                    <td className="px-4 py-4">
+                      {event.status === "CLOSED" ? "Clôturé" : "Actif"}
+                    </td>
                     <td className="px-4 py-4">{memberCount}</td>
                     <td className="px-4 py-4">{photoCount}</td>
                     <td className="px-4 py-4">

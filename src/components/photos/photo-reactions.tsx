@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Heart, ThumbsUp } from "lucide-react";
+import { Heart } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { PhotoReactionKind } from "@/types/database";
 
-const REACTIONS: { kind: PhotoReactionKind; label: string; icon: typeof Heart; activeClass: string }[] = [
-  { kind: "heart", label: "J’adore", icon: Heart, activeClass: "bg-fuchsia" },
-  { kind: "thumb", label: "J’aime", icon: ThumbsUp, activeClass: "bg-turquoise" },
-];
+// Le schéma garde plusieurs types de réaction, mais l'interface n'en propose
+// qu'un seul : un coup de cœur, ou rien.
+const KIND: PhotoReactionKind = "heart";
 
 export function PhotoReactions({
   photoId,
@@ -71,25 +70,16 @@ export function PhotoReactions({
 
   return (
     <section>
-      <div className="flex flex-wrap gap-2">
-        {REACTIONS.map(({ kind, label, icon: Icon, activeClass }) => {
-          const isActive = mine === kind;
-
-          return (
-            <button
-              key={kind}
-              type="button"
-              onClick={() => toggle(kind)}
-              aria-pressed={isActive}
-              className={`btn btn-sm ${isActive ? activeClass : ""}`}
-            >
-              <Icon className="h-4 w-4" fill={isActive ? "currentColor" : "none"} />
-              {label}
-              <span className="tabular-nums">{counts[kind]}</span>
-            </button>
-          );
-        })}
-      </div>
+      <button
+        type="button"
+        onClick={() => toggle(KIND)}
+        aria-pressed={mine === KIND}
+        className={`btn btn-sm ${mine === KIND ? "bg-fuchsia" : ""}`}
+      >
+        <Heart className="h-4 w-4" fill={mine === KIND ? "currentColor" : "none"} />
+        J’adore
+        <span className="tabular-nums">{counts[KIND]}</span>
+      </button>
 
       {error ? <p className="mt-2 text-sm font-semibold text-fuchsia">{error}</p> : null}
     </section>
