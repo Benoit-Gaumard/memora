@@ -167,21 +167,6 @@ select {
     mask-repeat: repeat-x, no-repeat;
   }
 
-  /* --- Frange de papier crépon ------------------------------------------- */
-  .fringe {
-    height: 22px;
-    background: repeating-linear-gradient(
-      90deg,
-      var(--fuchsia) 0 14px,
-      var(--citron) 14px 28px,
-      var(--turquoise) 28px 42px,
-      var(--mandarine) 42px 56px,
-      var(--raisin) 56px 70px
-    );
-    -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px);
-    mask-image: repeating-linear-gradient(90deg, #000 0 5px, transparent 5px 7px);
-  }
-
   /* --- Confettis ---------------------------------------------------------- */
   .confetti {
     background-image:

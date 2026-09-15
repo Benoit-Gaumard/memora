@@ -98,6 +98,18 @@ export interface PhotoComment {
   updated_at: string;
 }
 
+export type PhotoReactionKind = "heart" | "thumb";
+
+export interface PhotoReaction {
+  id: string;
+  photo_id: string;
+  event_id: string;
+  user_id: string;
+  kind: PhotoReactionKind;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AuditLog {
   id: string;
   actor_user_id: string;
@@ -118,6 +130,7 @@ export interface Database {
       event_members: { Row: EventMember };
       photos: { Row: PhotoRecord };
       photo_comments: { Row: PhotoComment };
+      photo_reactions: { Row: PhotoReaction };
       audit_logs: { Row: AuditLog };
     };
   };

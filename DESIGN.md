@@ -37,8 +37,6 @@ le papier clair sert à tout le reste.
 
 - `.paper` — feuille blanche, contour encre 2px, angles 26px, ombre douce. Jamais imbriquée
   dans une autre `.paper`.
-- `.fringe` — frange de papier crépon multicolore sous le header et au-dessus du footer.
-  (C'est une matière du monde, pas une grille décorative.)
 - `.confetti` — semis de confettis, uniquement sur les fonds sombres ou saturés.
 - `.tape` — bout de scotch pour fixer une photo.
 - `.marker` — surlignage citron tracé à la main derrière un fragment de titre.

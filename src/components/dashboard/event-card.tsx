@@ -26,6 +26,7 @@ export function EventCard({
             src={coverImageUrl}
             alt=""
             fill
+            unoptimized
             sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
             className="absolute inset-0 object-cover"
           />

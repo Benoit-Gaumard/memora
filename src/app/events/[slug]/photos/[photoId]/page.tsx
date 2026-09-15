@@ -5,9 +5,11 @@ import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { DeletePhotoButton } from "@/components/photos/delete-photo-button";
 import { PhotoComments, type PhotoCommentItem } from "@/components/photos/photo-comments";
+import { PhotoReactions } from "@/components/photos/photo-reactions";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getPrivatePhotoUrl } from "@/lib/private-photo";
 import { formatDate } from "@/lib/utils";
+import type { PhotoReactionKind } from "@/types/database";
 
 export default async function PhotoFullScreenPage({
   params,
@@ -44,7 +46,7 @@ export default async function PhotoFullScreenPage({
 
   const photoUrl = getPrivatePhotoUrl(photo.storage_display_path);
 
-  const [{ data: commentRows }, { data: viewerProfile }, { data: viewerMembership }] =
+  const [{ data: commentRows }, { data: viewerProfile }, { data: viewerMembership }, { data: reactionRows }] =
     await Promise.all([
       supabase
         .from("photo_comments")
@@ -58,7 +60,20 @@ export default async function PhotoFullScreenPage({
         .eq("event_id", event.id)
         .eq("user_id", user.id)
         .maybeSingle(),
+      supabase.from("photo_reactions").select("kind, user_id").eq("photo_id", photo.id),
     ]);
+
+  const reactionCounts: Record<PhotoReactionKind, number> = { heart: 0, thumb: 0 };
+  let viewerReaction: PhotoReactionKind | null = null;
+
+  const reactions = (reactionRows ?? []) as { kind: PhotoReactionKind; user_id: string }[];
+
+  for (const reaction of reactions) {
+    reactionCounts[reaction.kind] += 1;
+    if (reaction.user_id === user.id) {
+      viewerReaction = reaction.kind;
+    }
+  }
 
   const comments: PhotoCommentItem[] = (commentRows ?? []).map((comment) => {
     const profile = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
@@ -136,6 +151,16 @@ export default async function PhotoFullScreenPage({
               </dd>
             </div>
           </dl>
+
+          <div className="mt-5 border-t-2 border-dashed border-ink/20 pt-5">
+            <PhotoReactions
+              photoId={photo.id}
+              eventId={event.id}
+              currentUserId={user.id}
+              initialCounts={reactionCounts}
+              initialReaction={viewerReaction}
+            />
+          </div>
 
           <div className="mt-5">
             <PhotoComments

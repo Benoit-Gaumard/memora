@@ -48,12 +48,6 @@ export function LoginForm({ redirectTo }: { redirectTo?: string } = {}) {
         return;
       }
 
-      setMessage(
-        mode === "signin"
-          ? "Connexion réussie. Redirection…"
-          : "Compte créé. Redirection…",
-      );
-
       const target = redirectTo && redirectTo.startsWith("/") ? redirectTo : "/events";
       router.push(target);
       router.refresh();

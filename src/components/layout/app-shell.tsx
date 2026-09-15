@@ -27,13 +27,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <UserMenu />
           </div>
         </div>
-        <div className="fringe" aria-hidden />
       </header>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">{children}</main>
 
       <footer className="bg-grape text-[#e3d4f7]">
-        <div className="fringe rotate-180" aria-hidden />
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 py-8 text-center sm:px-6">
           <div className="display-sm text-2xl text-white">
             Toutes les photos de la fête, au même endroit.
