@@ -61,20 +61,20 @@ export function EventInviteManager({
 
   if (!existingCode) {
     return (
-      <div className="rounded-[32px] border border-dashed border-[#f0d9bf] bg-[#fffaf3] p-6 text-center shadow-sm">
-        <div className="text-sm text-[#5a4d47]">
+      <div className="paper p-6 text-center">
+        <div className="text-sm text-ink-soft">
           Aucun lien d’invitation n’a encore été créé pour cet événement.
         </div>
         <button
           type="button"
           onClick={handleGenerate}
           disabled={isCreating}
-          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#f4b178] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#e6995b] disabled:opacity-60"
+          className="mt-4 btn btn-fuchsia disabled:opacity-60"
         >
           <Share2 className="h-4 w-4" />
           {isCreating ? "Création…" : "Générer un lien d’invitation"}
         </button>
-        {error ? <div className="mt-3 text-xs text-[#c0523c]">{error}</div> : null}
+        {error ? <div className="mt-3 text-xs text-fuchsia">{error}</div> : null}
       </div>
     );
   }

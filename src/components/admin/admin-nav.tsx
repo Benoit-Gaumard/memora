@@ -24,10 +24,10 @@ export function AdminNav() {
             key={tab.href}
             href={tab.href}
             className={cn(
-              "rounded-full px-4 py-2 text-sm font-semibold transition",
+              "rounded-full border-2 border-ink px-4 py-2 font-display text-sm font-bold transition",
               isActive
-                ? "bg-[#f4b178] text-white"
-                : "border border-[#f0d9bf] bg-white text-[#5c4f46] hover:bg-[#fff3e6]",
+                ? "bg-fuchsia text-ink shadow-[0_3px_0_var(--ink)]"
+                : "bg-white text-ink hover:bg-citron",
             )}
           >
             {tab.label}

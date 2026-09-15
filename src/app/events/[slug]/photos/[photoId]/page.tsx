@@ -4,6 +4,7 @@ import { Download, ArrowLeft } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { DeletePhotoButton } from "@/components/photos/delete-photo-button";
+import { PhotoComments, type PhotoCommentItem } from "@/components/photos/photo-comments";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getPrivatePhotoUrl } from "@/lib/private-photo";
 import { formatDate } from "@/lib/utils";
@@ -43,15 +44,46 @@ export default async function PhotoFullScreenPage({
 
   const photoUrl = getPrivatePhotoUrl(photo.storage_display_path);
 
+  const [{ data: commentRows }, { data: viewerProfile }, { data: viewerMembership }] =
+    await Promise.all([
+      supabase
+        .from("photo_comments")
+        .select("id, body, created_at, user_id, profiles!user_id(display_name)")
+        .eq("photo_id", photo.id)
+        .order("created_at", { ascending: true }),
+      supabase.from("profiles").select("display_name, global_role").eq("id", user.id).maybeSingle(),
+      supabase
+        .from("event_members")
+        .select("role")
+        .eq("event_id", event.id)
+        .eq("user_id", user.id)
+        .maybeSingle(),
+    ]);
+
+  const comments: PhotoCommentItem[] = (commentRows ?? []).map((comment) => {
+    const profile = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
+
+    return {
+      id: comment.id,
+      body: comment.body,
+      created_at: comment.created_at,
+      user_id: comment.user_id,
+      authorName: profile?.display_name ?? "Membre",
+    };
+  });
+
+  const canModerate =
+    viewerProfile?.global_role === "super_admin" || viewerMembership?.role === "organizer";
+
   const author = Array.isArray(photo.profiles) ? photo.profiles[0]?.display_name : photo.profiles?.display_name;
   const isOwner = photo.user_id === user.id;
 
   return (
     <AppShell>
       <div className="grid gap-6 lg:grid-cols-[1.5fr_0.7fr]">
-        <div className="overflow-hidden rounded-[32px] border border-[#f0d9bf] bg-[#fffaf5] shadow-sm">
-          <div className="flex items-center justify-between border-b border-[#f3e3d3] px-4 py-3">
-            <Link href={`/events/${slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-[#51453f]">
+        <div className="paper overflow-hidden p-0">
+          <div className="flex items-center justify-between gap-3 border-b-2 border-ink px-4 py-3">
+            <Link href={`/events/${slug}`} className="paper-link inline-flex items-center gap-2 text-sm">
               <ArrowLeft className="h-4 w-4" />
               Retour à la galerie
             </Link>
@@ -59,7 +91,7 @@ export default async function PhotoFullScreenPage({
               <a
                 href={photoUrl}
                 download={photo.original_filename}
-                className="inline-flex items-center gap-2 rounded-full bg-[#f4b178] px-3 py-2 text-xs font-semibold text-white"
+                className="btn btn-sm btn-turquoise"
               >
                 <Download className="h-3.5 w-3.5" />
                 Télécharger
@@ -83,25 +115,37 @@ export default async function PhotoFullScreenPage({
           />
         </div>
 
-        <aside className="rounded-[32px] border border-[#f0d9bf] bg-white p-5 shadow-sm">
-          <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Photo</div>
-          <h1 className="mt-3 text-2xl font-black text-[#231d1a]">{photo.original_filename}</h1>
+        <aside className="paper p-5">
+          <h1 className="display-sm text-2xl">Photo de {author ?? "un invité"}</h1>
 
-          <div className="mt-5 space-y-3 text-sm text-[#4f4340]">
-            <div className="rounded-2xl bg-[#fff5ed] p-3">
-              <span className="font-semibold text-[#7d5e45]">Auteur :</span> {author ?? "Membre"}
+          <dl className="mt-5 divide-y-2 divide-dashed divide-ink/15 text-base">
+            <div className="flex justify-between gap-3 py-2">
+              <dt className="font-semibold text-ink-soft">Prise le</dt>
+              <dd className="text-right font-display font-bold text-ink">
+                {formatDate(photo.captured_at ?? photo.uploaded_at ?? photo.created_at)}
+              </dd>
             </div>
-            <div className="rounded-2xl bg-[#fff5ed] p-3">
-              <span className="font-semibold text-[#7d5e45]">Date :</span>{" "}
-              {formatDate(photo.captured_at ?? photo.uploaded_at ?? photo.created_at)}
+            <div className="flex justify-between gap-3 py-2">
+              <dt className="font-semibold text-ink-soft">Format</dt>
+              <dd className="text-right font-display font-bold text-ink">{photo.mime_type}</dd>
             </div>
-            <div className="rounded-2xl bg-[#fff5ed] p-3">
-              <span className="font-semibold text-[#7d5e45]">Format :</span> {photo.mime_type}
+            <div className="flex justify-between gap-3 py-2">
+              <dt className="font-semibold text-ink-soft">Taille</dt>
+              <dd className="text-right font-display font-bold text-ink">
+                {(photo.file_size / 1000000).toFixed(1)} Mo
+              </dd>
             </div>
-            <div className="rounded-2xl bg-[#fff5ed] p-3">
-              <span className="font-semibold text-[#7d5e45]">Taille :</span>{" "}
-              {(photo.file_size / 1000000).toFixed(1)} Mo
-            </div>
+          </dl>
+
+          <div className="mt-5">
+            <PhotoComments
+              photoId={photo.id}
+              eventId={event.id}
+              currentUserId={user.id}
+              currentUserName={viewerProfile?.display_name ?? "Membre"}
+              canModerate={canModerate}
+              initialComments={comments}
+            />
           </div>
         </aside>
       </div>

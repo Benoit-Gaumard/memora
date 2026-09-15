@@ -8,8 +8,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <AppShell>
       <div className="mb-6">
-        <div className="text-xs uppercase tracking-[0.2em] text-[#8d6c5d]">Back-office</div>
-        <h1 className="mt-3 text-4xl font-black tracking-tight text-[#201c1a]">Administration</h1>
+        <h1 className="display text-[clamp(2.2rem,5vw,3.4rem)]">Administration</h1>
       </div>
 
       <AdminNav />

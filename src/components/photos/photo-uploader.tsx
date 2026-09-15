@@ -70,7 +70,7 @@ export function PhotoUploader({ eventId }: { eventId: string }) {
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={isUploading}
-        className="inline-flex items-center gap-2 rounded-full bg-[#f4b178] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#e6995b] disabled:opacity-60"
+        className="btn btn-fuchsia btn-sm"
       >
         <Upload className="h-4 w-4" />
         {isUploading ? "Envoi en cours…" : "Ajouter des photos"}
@@ -85,18 +85,18 @@ export function PhotoUploader({ eventId }: { eventId: string }) {
       />
       {progress ? (
         <div className="w-48">
-          <div className="h-2 overflow-hidden rounded-full bg-[#f3e3d3]">
+          <div className="h-3 overflow-hidden rounded-full border-2 border-ink bg-white">
             <div
-              className="h-full rounded-full bg-[#f4b178] transition-all"
+              className="h-full bg-turquoise transition-all"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <div className="mt-1 text-right text-xs text-[#7c675d]">
+          <div className="mt-1 text-right text-sm font-semibold text-ink-soft">
             {progress.done}/{progress.total} envoyée(s)
           </div>
         </div>
       ) : null}
-      {message ? <div className="text-xs text-[#7c675d]">{message}</div> : null}
+      {message ? <div className="text-sm font-semibold text-ink-soft">{message}</div> : null}
     </div>
   );
 }

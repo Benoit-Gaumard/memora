@@ -69,12 +69,16 @@ export function LoginForm({ redirectTo }: { redirectTo?: string } = {}) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 rounded-3xl border border-[#f0d9bf] bg-white p-6 shadow-sm">
-      <div className="flex gap-2 rounded-full bg-[#fff5ed] p-1">
+    <form onSubmit={handleSubmit} className="paper space-y-5 p-6">
+      <h1 className="display-sm text-3xl">
+        {mode === "signin" ? "Content de vous revoir." : "Bienvenue dans la fête."}
+      </h1>
+
+      <div className="flex gap-2 rounded-full border-2 border-ink bg-white p-1">
         <button
           type="button"
-          className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${
-            mode === "signin" ? "bg-[#f4b178] text-white" : "text-[#685a52]"
+          className={`flex-1 rounded-full px-3 py-2 font-display text-sm font-bold transition ${
+            mode === "signin" ? "bg-fuchsia text-ink" : "text-ink-soft hover:bg-paper"
           }`}
           onClick={() => setMode("signin")}
         >
@@ -82,8 +86,8 @@ export function LoginForm({ redirectTo }: { redirectTo?: string } = {}) {
         </button>
         <button
           type="button"
-          className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${
-            mode === "signup" ? "bg-[#f4b178] text-white" : "text-[#685a52]"
+          className={`flex-1 rounded-full px-3 py-2 font-display text-sm font-bold transition ${
+            mode === "signup" ? "bg-fuchsia text-ink" : "text-ink-soft hover:bg-paper"
           }`}
           onClick={() => setMode("signup")}
         >
@@ -93,70 +97,69 @@ export function LoginForm({ redirectTo }: { redirectTo?: string } = {}) {
 
       <div className="space-y-4">
         {mode === "signup" ? (
-          <label className="block text-sm font-medium text-[#493d36]">
+          <label className="block text-sm font-semibold text-ink">
             Nom affiché
             <input
               value={displayName}
               onChange={(event) => setDisplayName(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none ring-0 transition focus:border-[#e38a52]"
+              className="field mt-2"
             />
           </label>
         ) : null}
 
         {mode === "signup" ? (
-          <label className="block text-sm font-medium text-[#493d36]">
+          <label className="block text-sm font-semibold text-ink">
             Adresse e-mail
             <input
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               type="email"
-              className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none ring-0 transition focus:border-[#e38a52]"
+              className="field mt-2"
             />
           </label>
         ) : null}
 
         {mode === "signup" ? (
-          <label className="block text-sm font-medium text-[#493d36]">
+          <label className="block text-sm font-semibold text-ink">
             Identifiant
             <input
               value={username}
               onChange={(event) => setUsername(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none ring-0 transition focus:border-[#e38a52]"
+              className="field mt-2"
             />
           </label>
         ) : (
-          <label className="block text-sm font-medium text-[#493d36]">
+          <label className="block text-sm font-semibold text-ink">
             Identifiant ou e-mail
             <input
               value={identifier}
               onChange={(event) => setIdentifier(event.target.value)}
-              className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none ring-0 transition focus:border-[#e38a52]"
+              className="field mt-2"
             />
           </label>
         )}
 
-        <label className="block text-sm font-medium text-[#493d36]">
+        <label className="block text-sm font-semibold text-ink">
           Mot de passe
           <input
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#eed8bd] bg-[#fffdfb] px-3 py-2.5 outline-none ring-0 transition focus:border-[#e38a52]"
+            className="field mt-2"
           />
         </label>
       </div>
 
       {message ? (
-        <div className="rounded-2xl border border-[#f2d7c2] bg-[#fff7f1] px-3 py-2 text-sm text-[#5c4337]">
+        <div
+          role="status"
+          className="rounded-2xl border-2 border-ink bg-citron px-3 py-2 text-sm font-semibold text-ink"
+        >
           {message}
         </div>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="w-full rounded-2xl bg-[#f4b178] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#e6995b] disabled:opacity-60"
-      >
+      <button type="submit" disabled={submitting} className="btn btn-turquoise w-full">
         {submitting
           ? "Traitement…"
           : mode === "signin"

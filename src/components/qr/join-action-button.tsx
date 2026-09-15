@@ -22,7 +22,7 @@ export function JoinActionButton({
     return (
       <a
         href={`/login?redirect=${encodeURIComponent(`/join/${code}`)}`}
-        className="inline-flex items-center gap-2 rounded-full bg-[#f4b178] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#e6995b]"
+        className="btn btn-fuchsia"
       >
         Connexion / création de compte
         <ArrowRight className="h-4 w-4" />
@@ -52,12 +52,12 @@ export function JoinActionButton({
         type="button"
         onClick={handleJoin}
         disabled={isJoining}
-        className="inline-flex items-center gap-2 rounded-full bg-[#f4b178] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#e6995b] disabled:opacity-60"
+        className="btn btn-fuchsia disabled:opacity-60"
       >
         {isJoining ? "Inscription…" : "Rejoindre cet événement"}
         <ArrowRight className="h-4 w-4" />
       </button>
-      {error ? <div className="mt-2 text-xs text-[#c0523c]">{error}</div> : null}
+      {error ? <div className="mt-2 text-xs text-fuchsia">{error}</div> : null}
     </div>
   );
 }

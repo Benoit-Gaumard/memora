@@ -41,7 +41,7 @@ export function DeleteEventButton({ eventId, eventName }: { eventId: string; eve
       type="button"
       onClick={handleDelete}
       disabled={submitting}
-      className="rounded-full bg-[#fdeceb] px-4 py-2 text-sm font-semibold text-[#b3392f] transition hover:bg-[#fbdedb] disabled:opacity-60"
+      className="btn btn-sm btn-ghost disabled:opacity-60"
     >
       {submitting ? "Suppression…" : "Supprimer l'événement"}
     </button>
