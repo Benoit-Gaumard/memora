@@ -15,6 +15,7 @@ export function EditEventForm({
     event_type: string;
     description: string;
     event_date: string;
+    end_date: string | null;
     status: string;
     cover_image_path: string | null;
   };
@@ -25,6 +26,7 @@ export function EditEventForm({
   const [name, setName] = useState(event.name);
   const [eventType, setEventType] = useState(event.event_type);
   const [eventDate, setEventDate] = useState(event.event_date.slice(0, 10));
+  const [endDate, setEndDate] = useState(event.end_date?.slice(0, 10) ?? "");
   const [description, setDescription] = useState(event.description);
   const [status, setStatus] = useState(event.status);
   const [submitting, setSubmitting] = useState(false);
@@ -44,6 +46,7 @@ export function EditEventForm({
           event_type: eventType,
           description,
           event_date: new Date(eventDate).toISOString(),
+          end_date: endDate || null,
           status,
         })
         .eq("id", event.id);
@@ -160,7 +163,7 @@ export function EditEventForm({
       </label>
 
       <label className="block text-sm font-medium text-ink-soft">
-        Date
+        Date de début
         <input
           required
           type="date"
@@ -168,6 +171,20 @@ export function EditEventForm({
           onChange={(fieldEvent) => setEventDate(fieldEvent.target.value)}
           className="field mt-2"
         />
+      </label>
+
+      <label className="block text-sm font-medium text-ink-soft">
+        Date de fin (facultative)
+        <input
+          type="date"
+          value={endDate}
+          min={eventDate}
+          onChange={(fieldEvent) => setEndDate(fieldEvent.target.value)}
+          className="field mt-2"
+        />
+        <span className="mt-2 block text-xs text-ink-faint">
+          Passé ce jour, l’album se clôture tout seul. Laissez vide pour le garder ouvert.
+        </span>
       </label>
 
       <label className="block text-sm font-medium text-ink-soft">
@@ -180,6 +197,9 @@ export function EditEventForm({
           <option value="ACTIVE">Actif</option>
           <option value="CLOSED">Clôturé</option>
         </select>
+        <span className="mt-2 block text-xs text-ink-faint">
+          « Clôturé » ferme l’album tout de suite, sans attendre la date de fin.
+        </span>
       </label>
 
       <label className="block text-sm font-medium text-ink-soft md:col-span-2">

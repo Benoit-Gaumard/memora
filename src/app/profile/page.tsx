@@ -1,5 +1,6 @@
 import { AppShell } from "@/components/layout/app-shell";
 import { ChangePasswordForm } from "@/components/profile/change-password-form";
+import { ProfileIdentityForm } from "@/components/profile/profile-identity-form";
 import {
   DeleteAccountForm,
   type OwnedEvent,
@@ -35,18 +36,19 @@ export default async function ProfilePage() {
 
           <dl className="mt-6 divide-y-2 divide-dashed divide-ink/15 text-base">
             <div className="flex justify-between gap-4 py-3">
-              <dt className="font-semibold text-ink-soft">Nom d’utilisateur</dt>
-              <dd className="text-right font-display text-lg font-extrabold text-ink">
-                {profile.username}
-              </dd>
-            </div>
-            <div className="flex justify-between gap-4 py-3">
               <dt className="font-semibold text-ink-soft">Adresse e-mail</dt>
               <dd className="text-right font-display text-lg font-extrabold text-ink">
                 {profile.email}
               </dd>
             </div>
           </dl>
+
+          <div className="mt-6 border-t-2 border-dashed border-ink/15 pt-6">
+            <ProfileIdentityForm
+              username={profile.username}
+              displayName={profile.display_name}
+            />
+          </div>
         </section>
 
         <section className="paper p-6 md:p-8">
@@ -56,8 +58,11 @@ export default async function ProfilePage() {
           </div>
         </section>
 
-        <section className="paper p-6 md:p-8">
-          <h2 className="display-sm text-2xl">Supprimer mon compte</h2>
+        <section className="paper paper-danger p-6 md:p-8">
+          <h2 className="display-sm text-2xl text-rouge">Supprimer mon compte</h2>
+          <p className="mt-2 text-sm font-semibold text-rouge">
+            Zone de danger : cette action est définitive.
+          </p>
           <div className="mt-5">
             <DeleteAccountForm userId={profile.id} ownedEvents={ownedEvents} />
           </div>

@@ -2,9 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Download, Maximize2, Trash2, X } from "lucide-react";
+import { Download, Trash2, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { formatShortDate } from "@/lib/utils";
+import {
+  PlainHeader,
+  SortableHeader,
+  useSortedRows,
+  type SortValue,
+} from "@/components/admin/sortable-table";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export interface AdminPhotoItem {
   id: string;
@@ -24,6 +31,13 @@ export interface AdminEventOption {
   name: string;
 }
 
+const SORT_ACCESSORS = {
+  filename: (photo: AdminPhotoItem) => photo.original_filename,
+  event: (photo: AdminPhotoItem) => photo.eventName,
+  author: (photo: AdminPhotoItem) => photo.authorName,
+  date: (photo: AdminPhotoItem) => photo.uploaded_at,
+} satisfies Record<string, (photo: AdminPhotoItem) => SortValue>;
+
 export function PhotosManager({
   photos,
   events,
@@ -36,7 +50,16 @@ export function PhotosManager({
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmingBulk, setConfirmingBulk] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [previewPhoto, setPreviewPhoto] = useState<AdminPhotoItem | null>(null);
+
+  const { sorted, sort, toggleSort } = useSortedRows({
+    rows: photos,
+    accessors: SORT_ACCESSORS,
+    initialKey: "date",
+    initialDirection: "desc",
+  });
 
   const allSelected = photos.length > 0 && selectedIds.size === photos.length;
 
@@ -77,9 +100,9 @@ export function PhotosManager({
 
   async function handleBulkDelete() {
     if (!selectedIds.size) return;
-    if (!window.confirm(`Supprimer ${selectedIds.size} photo(s) ? Cette action est irréversible.`)) return;
 
     setIsDeleting(true);
+    setDeleteError(null);
 
     const ids = Array.from(selectedIds);
     const allPaths = ids.flatMap((id) => storagePathsById.get(id) ?? []);
@@ -87,9 +110,16 @@ export function PhotosManager({
     if (allPaths.length) {
       await supabase.storage.from("event-photos").remove(allPaths);
     }
-    await supabase.from("photos").delete().in("id", ids);
+    const { error } = await supabase.from("photos").delete().in("id", ids);
 
     setIsDeleting(false);
+
+    if (error) {
+      setDeleteError("Suppression impossible. Réessayez.");
+      return;
+    }
+
+    setConfirmingBulk(false);
     setSelectedIds(new Set());
     router.refresh();
   }
@@ -120,7 +150,10 @@ export function PhotosManager({
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={handleBulkDelete}
+              onClick={() => {
+                setDeleteError(null);
+                setConfirmingBulk(true);
+              }}
               disabled={!selectedIds.size || isDeleting}
               className="btn btn-sm btn-mandarine disabled:opacity-50"
             >
@@ -146,15 +179,15 @@ export function PhotosManager({
                     aria-label="Tout sélectionner"
                   />
                 </th>
-                {["", "Fichier", "Événement", "Auteur", "Date", ""].map((header, index) => (
-                  <th key={`${header}-${index}`} className="px-4 py-3 font-semibold">
-                    {header}
-                  </th>
-                ))}
+                <PlainHeader srLabel="Aperçu" />
+                <SortableHeader label="Fichier" sortKey="filename" sort={sort} onSort={toggleSort} />
+                <SortableHeader label="Événement" sortKey="event" sort={sort} onSort={toggleSort} />
+                <SortableHeader label="Auteur" sortKey="author" sort={sort} onSort={toggleSort} />
+                <SortableHeader label="Date" sortKey="date" sort={sort} onSort={toggleSort} />
               </tr>
             </thead>
             <tbody>
-              {photos.map((photo) => {
+              {sorted.map((photo) => {
                 const thumbnailUrl = photo.thumbnailUrl ?? photo.url;
 
                 return (
@@ -191,16 +224,6 @@ export function PhotosManager({
                     <td className="px-4 py-4">{photo.authorName}</td>
                     <td className="px-4 py-4">
                       {photo.uploaded_at ? formatShortDate(photo.uploaded_at) : ""}
-                    </td>
-                    <td className="px-4 py-4">
-                      <button
-                        type="button"
-                        onClick={() => setPreviewPhoto(photo)}
-                        className="btn btn-sm btn-citron"
-                      >
-                        <Maximize2 className="h-3.5 w-3.5" />
-                        Agrandir
-                      </button>
                     </td>
                   </tr>
                 );
@@ -260,6 +283,35 @@ export function PhotosManager({
           </div>
         </div>
       ) : null}
+
+      <ConfirmDialog
+        open={confirmingBulk}
+        title={
+          selectedIds.size > 1
+            ? `Supprimer ces ${selectedIds.size} photos ?`
+            : "Supprimer cette photo ?"
+        }
+        description={
+          <p>
+            {selectedIds.size > 1
+              ? "Elles disparaîtront des albums pour tout le monde, avec leurs commentaires et leurs réactions."
+              : "Elle disparaîtra de l’album pour tout le monde, avec ses commentaires et ses réactions."}{" "}
+            Les fichiers quittent aussi le stockage : rien ne pourra être récupéré.
+          </p>
+        }
+        confirmLabel={
+          selectedIds.size > 1 ? `Supprimer les ${selectedIds.size} photos` : "Supprimer la photo"
+        }
+        pendingLabel="Suppression…"
+        error={deleteError}
+        submitting={isDeleting}
+        onConfirm={handleBulkDelete}
+        onCancel={() => {
+          if (isDeleting) return;
+          setConfirmingBulk(false);
+          setDeleteError(null);
+        }}
+      />
     </div>
   );
 }

@@ -93,7 +93,7 @@ export default function HomePage() {
     <AppShell>
       <div hidden dangerouslySetInnerHTML={{ __html: DESIGN_CONTRACT }} />
 
-      <section className="relative -mx-4 overflow-hidden bg-grape px-4 pb-14 pt-12 text-white sm:-mx-6 sm:px-6 md:rounded-[40px] md:px-10 md:pb-16 md:pt-14">
+      <section className="relative -mx-4 -mt-10 overflow-hidden bg-grape px-4 pb-14 pt-12 text-white sm:-mx-6 sm:px-6 md:rounded-b-[40px] md:px-10 md:pb-16 md:pt-14">
         <div className="confetti pointer-events-none absolute inset-0 opacity-40" aria-hidden />
         <svg
           aria-hidden

@@ -3,15 +3,40 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { LogOut, User } from "lucide-react";
+import { LogOut, Shield, User } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useSupabaseSession } from "@/lib/use-session";
 
 export function UserMenu() {
   const { session, isLoading } = useSupabaseSession();
   const [isOpen, setIsOpen] = useState(false);
+  const [adminUserId, setAdminUserId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  const userId = session?.user.id ?? null;
+  const isSuperAdmin = userId !== null && adminUserId === userId;
+
+  useEffect(() => {
+    if (!userId) return;
+
+    let cancelled = false;
+
+    supabase
+      .from("profiles")
+      .select("global_role")
+      .eq("id", userId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data?.global_role === "super_admin") {
+          setAdminUserId(userId);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -73,6 +98,16 @@ export function UserMenu() {
             <User className="h-4 w-4" />
             Mon profil
           </Link>
+          {isSuperAdmin ? (
+            <Link
+              href="/admin"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-ink transition hover:bg-citron"
+            >
+              <Shield className="h-4 w-4" />
+              Administration
+            </Link>
+          ) : null}
           <button
             type="button"
             onClick={handleSignOut}

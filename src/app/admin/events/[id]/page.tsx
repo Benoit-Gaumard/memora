@@ -96,6 +96,7 @@ export default async function AdminEventDetailPage({
           event_type: event.event_type,
           description: event.description,
           event_date: event.event_date,
+          end_date: event.end_date ?? null,
           status: event.status,
           cover_image_path: event.cover_image_path,
         }}
@@ -135,7 +136,12 @@ export default async function AdminEventDetailPage({
                     <td className="px-4 py-4">{member.role === "organizer" ? "Organisateur" : "Invité"}</td>
                     <td className="px-4 py-4">{member.status}</td>
                     <td className="px-4 py-4">
-                      {member.role === "organizer" ? null : <RemoveMemberButton memberId={member.id} />}
+                      {member.role === "organizer" ? null : (
+                        <RemoveMemberButton
+                          memberId={member.id}
+                          memberName={profile?.display_name ?? profile?.username ?? null}
+                        />
+                      )}
                     </td>
                   </tr>
                 );

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MessageCircle, Send, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { formatDate } from "@/lib/utils";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export type PhotoCommentItem = {
   id: string;
@@ -31,6 +32,8 @@ export function PhotoComments({
   initialComments: PhotoCommentItem[];
 }) {
   const [comments, setComments] = useState(initialComments);
+  const [pendingDelete, setPendingDelete] = useState<PhotoCommentItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [body, setBody] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,7 +79,8 @@ export function PhotoComments({
   }
 
   async function handleDelete(commentId: string) {
-    if (!window.confirm("Supprimer ce commentaire ?")) return;
+    setIsDeleting(true);
+    setError(null);
 
     const previous = comments;
     setComments((current) => current.filter((comment) => comment.id !== commentId));
@@ -86,10 +90,15 @@ export function PhotoComments({
       .delete()
       .eq("id", commentId);
 
+    setIsDeleting(false);
+
     if (deleteError) {
       setComments(previous);
       setError("Impossible de supprimer le commentaire.");
+      return;
     }
+
+    setPendingDelete(null);
   }
 
   return (
@@ -123,7 +132,10 @@ export function PhotoComments({
                 {comment.user_id === currentUserId || canModerate ? (
                   <button
                     type="button"
-                    onClick={() => handleDelete(comment.id)}
+                    onClick={() => {
+                      setError(null);
+                      setPendingDelete(comment);
+                    }}
                     aria-label="Supprimer ce commentaire"
                     className="rounded-full border-2 border-ink bg-white p-1.5 text-ink transition hover:bg-citron"
                   >
@@ -169,6 +181,35 @@ export function PhotoComments({
       </form>
 
       {error ? <p className="mt-2 text-base font-semibold text-fuchsia">{error}</p> : null}
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Supprimer ce commentaire ?"
+        description={
+          <>
+            <p>
+              {pendingDelete && pendingDelete.user_id === currentUserId
+                ? "Votre commentaire disparaîtra de la photo pour tout le monde."
+                : `Le commentaire de ${pendingDelete?.authorName} disparaîtra de la photo pour tout le monde.`}
+            </p>
+            {pendingDelete ? (
+              <p className="rounded-2xl border-2 border-dashed border-ink/25 bg-paper px-3 py-2 text-ink">
+                « {pendingDelete.body} »
+              </p>
+            ) : null}
+          </>
+        }
+        confirmLabel="Supprimer le commentaire"
+        pendingLabel="Suppression…"
+        submitting={isDeleting}
+        onConfirm={() => {
+          if (pendingDelete) void handleDelete(pendingDelete.id);
+        }}
+        onCancel={() => {
+          if (isDeleting) return;
+          setPendingDelete(null);
+        }}
+      />
     </section>
   );
 }

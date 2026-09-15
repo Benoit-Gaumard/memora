@@ -22,9 +22,11 @@ jamais du blanc.
 | Nuit de fête (bandeaux) | `--grape` / `--grape-deep` | `#2a0e4f` / `#1c0733` |
 | Lumière | `--citron` | `#ffc93c` |
 | Violet vif | `--raisin` | `#6b2cf5` |
+| Alerte | `--rouge` | `#d90429` |
 
 Le raisin sombre sert aux surfaces « soirée » (header, footer, hero, couvertures d'album) ;
-le papier clair sert à tout le reste.
+le papier clair sert à tout le reste. Le rouge n'est jamais décoratif : il n'encadre que les
+zones de danger (suppression définitive).
 
 ## Typographie
 
@@ -48,8 +50,16 @@ le papier clair sert à tout le reste.
 
 - `.btn` (+ `btn-fuchsia`, `btn-citron`, `btn-turquoise`, `btn-mandarine`, `btn-ghost`, `btn-sm`) :
   pastille à contour encre, ombre portée pleine `0 4px 0`, qui s'enfonce au clic.
+  `btn-danger` : variante blanche cernée de rouge, réservée aux actions irréversibles.
 - `.chip` : étiquette papier à contour encre ; `.chip-night` sur fond raisin.
-- `.field` : champ blanc à contour épais, focus fuchsia.
+- `.field` : champ blanc à contour épais, focus fuchsia ; `.field-danger` passe le focus au rouge.
+- `.paper-danger` : `.paper` encadrée de rouge, pour les zones de danger.
+- `.modal` : `<dialog>` natif servant de cadre transparent, backdrop encre floutée ; le contenu
+  est une `.paper` ordinaire. Toujours `<dialog>`, jamais un overlay maison ni `window.confirm`.
+  Une suppression définitive se confirme en tapant le nom exact de l'objet.
+- Tableaux d'administration : en-têtes triables (`SortableHeader`), chevron discret au repos,
+  flèche pleine sur la colonne active, `aria-sort` porté par le `<th>`. Le tri se fait sur les
+  lignes déjà chargées, sans aller-retour serveur, et les cellules vides finissent toujours en bas.
 - Listes de faits (profil, détail photo, admin) : lignes séparées par des pointillés,
   jamais des sous-cartes.
 

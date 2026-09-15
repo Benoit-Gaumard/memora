@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SiteNav } from "@/components/layout/site-nav";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { UserMenu } from "@/components/layout/user-menu";
+import { BackToTop } from "@/components/layout/back-to-top";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -39,6 +40,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <p className="text-sm">Memora, albums privés pour vos événements.</p>
         </div>
       </footer>
+
+      <BackToTop />
     </div>
   );
 }

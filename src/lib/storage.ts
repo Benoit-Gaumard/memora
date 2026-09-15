@@ -136,11 +136,11 @@ export async function uploadEventCoverImage({
  * must be called explicitly before/after deleting the event row.
  */
 /**
- * Removes every stored file uploaded by a given user, across all events.
- * Best-effort, and it must run *before* the matching `photos` rows disappear,
- * since the storage paths only live on those rows.
+ * Chemins de stockage de toutes les photos envoyées par un utilisateur.
+ * À lire tant que les lignes `photos` existent : les chemins n'existent nulle
+ * part ailleurs.
  */
-export async function deleteUserPhotoFiles(userId: string) {
+export async function listUserPhotoPaths(userId: string): Promise<string[]> {
   const { data } = await supabase
     .from("photos")
     .select("storage_original_path, storage_display_path, storage_thumbnail_path")
@@ -152,7 +152,7 @@ export async function deleteUserPhotoFiles(userId: string) {
     storage_thumbnail_path: string | null;
   }>;
 
-  const paths = Array.from(
+  return Array.from(
     new Set(
       rows.flatMap((row) => [
         row.storage_original_path,
@@ -161,10 +161,22 @@ export async function deleteUserPhotoFiles(userId: string) {
       ]),
     ),
   ).filter((path): path is string => Boolean(path));
+}
 
+/** Retrait best-effort d'un lot d'objets du bucket photos. */
+export async function removeStoragePaths(paths: string[]) {
   if (paths.length > 0) {
     await supabase.storage.from(PHOTOS_BUCKET).remove(paths);
   }
+}
+
+/**
+ * Removes every stored file uploaded by a given user, across all events.
+ * Best-effort, and it must run *before* the matching `photos` rows disappear,
+ * since the storage paths only live on those rows.
+ */
+export async function deleteUserPhotoFiles(userId: string) {
+  await removeStoragePaths(await listUserPhotoPaths(userId));
 }
 
 /**
