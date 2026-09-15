@@ -22,6 +22,9 @@
   --grape: #2a0e4f;
   --grape-deep: #1c0733;
 
+  /* Rouge d'alerte : réservé aux actions irréversibles, jamais décoratif. */
+  --rouge: #d90429;
+
   --background: var(--paper);
   --foreground: var(--ink);
 
@@ -45,6 +48,7 @@
   --color-citron: var(--citron);
   --color-grape: var(--grape);
   --color-grape-deep: var(--grape-deep);
+  --color-rouge: var(--rouge);
 
   --font-sans: var(--font-text), "Segoe UI", sans-serif;
   --font-display: var(--font-display), "Segoe UI", sans-serif;
@@ -138,6 +142,15 @@ select {
 
   .paper-tilt-alt {
     transform: rotate(1.4deg);
+  }
+
+  /* Zone de danger : le même papier, encadré de rouge, pour les actions
+     irréversibles. Le rouge ne sert jamais d'aplat décoratif. */
+  .paper-danger {
+    border-color: var(--rouge);
+    box-shadow:
+      0 2px 0 rgba(217, 4, 41, 0.1),
+      0 18px 32px -20px rgba(217, 4, 41, 0.45);
   }
 
   .paper-link {
@@ -255,6 +268,27 @@ select {
     box-shadow: 0 0 0 var(--ink);
   }
 
+  /* Bouton d'action irréversible : blanc, cerné de rouge. */
+  .btn-danger {
+    border-color: var(--rouge);
+    color: var(--rouge);
+    box-shadow: 0 4px 0 var(--rouge);
+  }
+
+  .btn-danger:hover {
+    background: #fff4f6;
+    box-shadow: 0 2px 0 var(--rouge);
+  }
+
+  .btn-danger:active {
+    box-shadow: 0 0 0 var(--rouge);
+  }
+
+  .btn-danger:disabled,
+  .btn-danger[aria-disabled="true"] {
+    box-shadow: 0 4px 0 var(--rouge);
+  }
+
   /* --- Étiquettes --------------------------------------------------------- */
   .chip {
     display: inline-flex;
@@ -297,6 +331,63 @@ select {
     outline: none;
     border-color: var(--fuchsia);
     box-shadow: 0 0 0 4px rgba(255, 46, 136, 0.18);
+  }
+
+  .field-danger:focus {
+    border-color: var(--rouge);
+    box-shadow: 0 0 0 4px rgba(217, 4, 41, 0.18);
+  }
+
+  /* --- Modale -------------------------------------------------------------
+     Un `<dialog>` natif : la touche Échap, le piège de focus et l'inertie de
+     l'arrière-plan viennent du navigateur, pas d'un overlay bricolé. L'élément
+     lui-même n'est qu'un cadre transparent ; le papier est posé à l'intérieur. */
+  .modal {
+    width: min(34rem, calc(100vw - 2rem));
+    max-height: calc(100dvh - 2rem);
+    /* Le preflight Tailwind remet `margin: 0` partout, ce qui décolle le
+       dialogue du centrage que l'agent utilisateur applique normalement. */
+    margin: auto;
+    padding: 2px;
+    border: none;
+    background: transparent;
+    color: var(--ink);
+    /* Le contenu reste atteignable même en paysage sur petit écran. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .modal::backdrop {
+    background: rgba(28, 7, 51, 0.62);
+    backdrop-filter: blur(3px);
+  }
+
+  .modal[open] {
+    animation: modal-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .modal[open]::backdrop {
+    animation: modal-backdrop-in 0.28s ease-out both;
+  }
+
+  @keyframes modal-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.97) rotate(-0.8deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1) rotate(0deg);
+    }
+  }
+
+  @keyframes modal-backdrop-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   /* --- Ruban adhésif ------------------------------------------------------ */
@@ -342,5 +433,10 @@ select {
 
   .paper-link:hover {
     transform: none;
+  }
+
+  .modal[open],
+  .modal[open]::backdrop {
+    animation: none;
   }
 }

@@ -37,7 +37,7 @@ export function MobileNav() {
       </button>
 
       {isOpen ? (
-        <div className="absolute left-0 z-50 mt-2 w-44 rounded-2xl border-2 border-ink bg-white p-2 shadow-[0_5px_0_var(--ink)]">
+        <div className="absolute right-0 z-50 mt-2 w-44 max-w-[calc(100vw-2rem)] rounded-2xl border-2 border-ink bg-white p-2 shadow-[0_5px_0_var(--ink)]">
           {navItems.map((item) => (
             <Link
               key={item.href}

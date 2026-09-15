@@ -1,85 +1,32 @@
-import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getPrivatePhotoUrl } from "@/lib/private-photo";
 import { CreateEventForm } from "@/components/admin/create-event-form";
-import { DeleteEventButton } from "@/components/admin/delete-event-button";
+import { EventsTable, type AdminEventRow } from "@/components/admin/events-table";
 
 export default async function AdminEventsPage() {
   const supabase = await getSupabaseServerClient();
 
   const { data: events } = await supabase
     .from("events")
-    .select("id, name, event_type, event_date, status, cover_image_path, event_members(count), photos(count)")
+    .select("id, name, event_type, event_date, end_date, status, cover_image_path, event_members(count), photos(count)")
     .order("created_at", { ascending: false });
 
-  const coverUrls = new Map<string, string>();
-  for (const event of events ?? []) {
-    if (!event.cover_image_path) continue;
-    coverUrls.set(event.id, getPrivatePhotoUrl(event.cover_image_path));
-  }
+  const rows: AdminEventRow[] = (events ?? []).map((event) => ({
+    id: event.id,
+    name: event.name,
+    event_type: event.event_type,
+    event_date: event.event_date,
+    end_date: event.end_date ?? null,
+    status: event.status,
+    memberCount: Array.isArray(event.event_members) ? (event.event_members[0]?.count ?? 0) : 0,
+    photoCount: Array.isArray(event.photos) ? (event.photos[0]?.count ?? 0) : 0,
+    coverUrl: event.cover_image_path ? getPrivatePhotoUrl(event.cover_image_path) : null,
+  }));
 
   return (
     <>
       <CreateEventForm />
-
-      <div className="overflow-hidden paper p-0">
-        <table className="min-w-full text-left text-sm text-ink-soft">
-          <thead className="bg-paper text-ink-soft">
-            <tr>
-              {["", "Nom", "Type", "Date", "Statut", "Membres", "Photos", ""].map((header) => (
-                <th key={header} className="px-4 py-3 font-semibold">
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {events?.length ? (
-              events.map((event) => {
-                const memberCount = Array.isArray(event.event_members)
-                  ? (event.event_members[0]?.count ?? 0)
-                  : 0;
-                const photoCount = Array.isArray(event.photos) ? (event.photos[0]?.count ?? 0) : 0;
-                const coverUrl = coverUrls.get(event.id);
-
-                return (
-                  <tr key={event.id} className="border-t border-ink/15">
-                    <td className="px-4 py-4">
-                      <div className="h-12 w-16 overflow-hidden rounded-xl border border-ink/15 bg-paper">
-                        {coverUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={coverUrl} alt="" className="h-full w-full object-cover" />
-                        ) : null}
-                      </div>
-                    </td>
-                    <td className="px-4 py-4 font-semibold text-ink">
-                      <Link href={`/admin/events/${event.id}`} className="hover:underline">
-                        {event.name}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-4">{event.event_type}</td>
-                    <td className="px-4 py-4">{new Date(event.event_date).toLocaleDateString("fr-FR")}</td>
-                    <td className="px-4 py-4">
-                      {event.status === "CLOSED" ? "Clôturé" : "Actif"}
-                    </td>
-                    <td className="px-4 py-4">{memberCount}</td>
-                    <td className="px-4 py-4">{photoCount}</td>
-                    <td className="px-4 py-4">
-                      <DeleteEventButton eventId={event.id} eventName={event.name} />
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan={8} className="px-4 py-6 text-center text-ink-faint">
-                  Aucun événement créé pour le moment.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <EventsTable rows={rows} />
     </>
   );
 }

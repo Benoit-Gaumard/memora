@@ -27,6 +27,7 @@ export function CreateEventForm() {
   const [name, setName] = useState("");
   const [eventType, setEventType] = useState("Mariage");
   const [eventDate, setEventDate] = useState(defaultEventDate);
+  const [endDate, setEndDate] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -56,6 +57,7 @@ export function CreateEventForm() {
           event_type: eventType,
           description,
           event_date: new Date(eventDate).toISOString(),
+          end_date: endDate || null,
           bucket_name: slug,
           status: "ACTIVE",
           created_by: user.id,
@@ -94,6 +96,7 @@ export function CreateEventForm() {
       setName("");
       setEventType("Mariage");
       setEventDate(defaultEventDate());
+      setEndDate("");
       setDescription("");
       setMessage({ type: "success", text: "Événement créé avec succès." });
       router.refresh();
@@ -138,7 +141,7 @@ export function CreateEventForm() {
       </label>
 
       <label className="block text-sm font-medium text-ink-soft">
-        Date
+        Date de début
         <input
           required
           type="date"
@@ -146,6 +149,21 @@ export function CreateEventForm() {
           onChange={(event) => setEventDate(event.target.value)}
           className="field mt-2"
         />
+      </label>
+
+      <label className="block text-sm font-medium text-ink-soft">
+        Date de fin (facultative)
+        <input
+          type="date"
+          value={endDate}
+          min={eventDate}
+          onChange={(event) => setEndDate(event.target.value)}
+          className="field mt-2"
+        />
+        <span className="mt-2 block text-xs text-ink-faint">
+          Passé ce jour, l’album se clôture tout seul : plus d’ajout de photos, mais
+          toujours consultable et téléchargeable. Laissez vide pour le garder ouvert.
+        </span>
       </label>
 
       <label className="block text-sm font-medium text-ink-soft md:col-span-2">

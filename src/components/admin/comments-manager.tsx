@@ -6,6 +6,13 @@ import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { formatShortDate } from "@/lib/utils";
+import {
+  PlainHeader,
+  SortableHeader,
+  useSortedRows,
+  type SortValue,
+} from "@/components/admin/sortable-table";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export interface AdminCommentItem {
   id: string;
@@ -24,6 +31,13 @@ export interface AdminEventOption {
   name: string;
 }
 
+const SORT_ACCESSORS = {
+  body: (comment: AdminCommentItem) => comment.body,
+  author: (comment: AdminCommentItem) => comment.authorName,
+  event: (comment: AdminCommentItem) => comment.eventName,
+  date: (comment: AdminCommentItem) => comment.created_at,
+} satisfies Record<string, (comment: AdminCommentItem) => SortValue>;
+
 export function CommentsManager({
   comments,
   events,
@@ -34,8 +48,16 @@ export function CommentsManager({
   selectedEventId: string | null;
 }) {
   const router = useRouter();
+  const [pendingDelete, setPendingDelete] = useState<AdminCommentItem | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const { sorted, sort, toggleSort } = useSortedRows({
+    rows: comments,
+    accessors: SORT_ACCESSORS,
+    initialKey: "date",
+    initialDirection: "desc",
+  });
 
   function handleFilterChange(eventId: string) {
     const params = new URLSearchParams();
@@ -44,14 +66,6 @@ export function CommentsManager({
   }
 
   async function handleDelete(comment: AdminCommentItem) {
-    if (
-      !window.confirm(
-        `Supprimer ce commentaire de ${comment.authorName} ? Cette action est irréversible.`,
-      )
-    ) {
-      return;
-    }
-
     setDeletingId(comment.id);
     setError(null);
 
@@ -67,6 +81,7 @@ export function CommentsManager({
       return;
     }
 
+    setPendingDelete(null);
     router.refresh();
   }
 
@@ -91,7 +106,7 @@ export function CommentsManager({
         </select>
       </div>
 
-      {error ? (
+      {error && !pendingDelete ? (
         <div
           role="alert"
           className="mb-4 rounded-2xl border-2 border-ink bg-citron px-3 py-2 text-sm font-semibold text-ink"
@@ -105,15 +120,16 @@ export function CommentsManager({
           <table className="min-w-full text-left text-sm text-ink-soft">
             <thead className="bg-paper text-ink-soft">
               <tr>
-                {["", "Commentaire", "Auteur", "Événement", "Date", ""].map((header, index) => (
-                  <th key={`${header}-${index}`} className="px-4 py-3 font-semibold">
-                    {header}
-                  </th>
-                ))}
+                <PlainHeader srLabel="Aperçu" />
+                <SortableHeader label="Commentaire" sortKey="body" sort={sort} onSort={toggleSort} />
+                <SortableHeader label="Auteur" sortKey="author" sort={sort} onSort={toggleSort} />
+                <SortableHeader label="Événement" sortKey="event" sort={sort} onSort={toggleSort} />
+                <SortableHeader label="Date" sortKey="date" sort={sort} onSort={toggleSort} />
+                <PlainHeader srLabel="Actions" />
               </tr>
             </thead>
             <tbody>
-              {comments.map((comment) => (
+              {sorted.map((comment) => (
                 <tr key={comment.id} className="border-t border-ink/15 align-top">
                   <td className="px-4 py-4">
                     <div className="h-12 w-12 overflow-hidden rounded-xl border border-ink/15 bg-paper">
@@ -145,7 +161,10 @@ export function CommentsManager({
                   <td className="px-4 py-4">
                     <button
                       type="button"
-                      onClick={() => handleDelete(comment)}
+                      onClick={() => {
+                        setError(null);
+                        setPendingDelete(comment);
+                      }}
                       disabled={deletingId === comment.id}
                       className="btn btn-sm btn-mandarine disabled:opacity-50"
                     >
@@ -163,6 +182,37 @@ export function CommentsManager({
           Aucun commentaire ne correspond à ce filtre.
         </div>
       )}
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="Supprimer ce commentaire ?"
+        description={
+          <>
+            <p>
+              Le commentaire de{" "}
+              <span className="font-semibold text-ink">{pendingDelete?.authorName}</span>{" "}
+              disparaîtra de la photo pour tout le monde.
+            </p>
+            {pendingDelete ? (
+              <p className="rounded-2xl border-2 border-dashed border-ink/25 bg-paper px-3 py-2 text-ink">
+                « {pendingDelete.body} »
+              </p>
+            ) : null}
+          </>
+        }
+        confirmLabel="Supprimer le commentaire"
+        pendingLabel="Suppression…"
+        error={error}
+        submitting={deletingId !== null}
+        onConfirm={() => {
+          if (pendingDelete) void handleDelete(pendingDelete);
+        }}
+        onCancel={() => {
+          if (deletingId) return;
+          setPendingDelete(null);
+          setError(null);
+        }}
+      />
     </div>
   );
 }

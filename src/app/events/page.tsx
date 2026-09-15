@@ -35,6 +35,11 @@ export default async function EventsPage() {
     <AppShell>
       <div className="mb-8">
         <h1 className="display text-[clamp(2.2rem,5vw,3.4rem)]">Mes albums de fête</h1>
+        {events.length ? (
+          <p className="mt-3 max-w-[38rem] text-base leading-7 text-ink-soft">
+            Ouvrez un album pour voir toutes ses photos et y ajouter les vôtres.
+          </p>
+        ) : null}
       </div>
 
       {events.length ? (

@@ -23,6 +23,7 @@ export interface EventRecord {
   event_type: string;
   description: string;
   event_date: string;
+  end_date?: string | null;
   timezone: string;
   cover_image_path?: string | null;
   bucket_name: string;

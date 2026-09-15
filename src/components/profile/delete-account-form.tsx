@@ -96,12 +96,15 @@ export function DeleteAccountForm({
       </p>
 
       <label className="block text-sm font-semibold text-ink">
-        Tapez <span className="font-display font-extrabold">{CONFIRMATION_WORD}</span>{" "}
-        pour confirmer
+        <span className="block">
+          Tapez{" "}
+          <span className="font-display font-extrabold">{CONFIRMATION_WORD}</span> pour
+          confirmer
+        </span>
         <input
           value={confirmation}
           onChange={(event) => setConfirmation(event.target.value)}
-          className="field mt-2 sm:max-w-xs"
+          className="field field-danger mt-2 block sm:max-w-xs"
           autoComplete="off"
           placeholder={CONFIRMATION_WORD}
         />
@@ -110,7 +113,7 @@ export function DeleteAccountForm({
       {error ? (
         <div
           role="alert"
-          className="rounded-2xl border-2 border-ink bg-citron px-3 py-2 text-sm font-semibold text-ink"
+          className="rounded-2xl border-2 border-rouge bg-white px-3 py-2 text-sm font-semibold text-rouge"
         >
           {error}
         </div>
@@ -119,7 +122,7 @@ export function DeleteAccountForm({
       <button
         type="submit"
         disabled={!confirmed || submitting}
-        className="btn btn-ghost"
+        className="btn btn-ghost btn-danger"
       >
         {submitting ? "Suppression…" : "Supprimer définitivement mon compte"}
       </button>

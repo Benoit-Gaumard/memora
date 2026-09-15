@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { CalendarDays, ImageIcon, Lock, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, ImageIcon, Lock, Users } from "lucide-react";
 import type { EventRecord } from "@/types/database";
-import { formatDate } from "@/lib/utils";
+import { formatEventPeriod, isEventClosed } from "@/lib/events";
 
 export function EventCard({
   event,
@@ -15,10 +15,19 @@ export function EventCard({
   photoCount: number;
   coverImageUrl?: string | null;
 }) {
+  const isClosed = isEventClosed(event);
+  const actionLabel =
+    photoCount > 0
+      ? "Voir les photos"
+      : isClosed
+        ? "Ouvrir l’album"
+        : "Ajouter les premières photos";
+
   return (
     <Link
       href={`/events/${event.slug}`}
-      className="paper group block overflow-hidden p-0 transition hover:-translate-y-1"
+      aria-label={`${actionLabel} de ${event.name}`}
+      className="paper paper-link group block overflow-hidden p-0"
     >
       <div className="relative h-44 overflow-hidden border-b-2 border-ink bg-grape">
         {coverImageUrl ? (
@@ -42,7 +51,7 @@ export function EventCard({
           </div>
           <div className="mt-1 inline-flex items-center gap-1.5 rounded-full border-2 border-ink bg-citron px-2.5 py-1 text-xs font-bold text-ink">
             <CalendarDays className="h-3.5 w-3.5" />
-            {formatDate(event.event_date)}
+            {formatEventPeriod(event.event_date, event.end_date)}
           </div>
         </div>
       </div>
@@ -50,7 +59,7 @@ export function EventCard({
       <div className="space-y-3 p-5">
         <div className="flex flex-wrap items-center gap-2">
           <span className="chip">{event.event_type}</span>
-          {event.status === "CLOSED" ? (
+          {isClosed ? (
             <span className="chip bg-citron">
               <Lock className="h-3.5 w-3.5" />
               album clôturé
@@ -75,6 +84,11 @@ export function EventCard({
             {photoCount} photos
           </span>
         </div>
+
+        <span className="btn btn-sm btn-fuchsia w-full">
+          {actionLabel}
+          <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+        </span>
       </div>
     </Link>
   );

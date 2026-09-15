@@ -6,6 +6,7 @@ import { PhotoGrid } from "@/components/gallery/photo-grid";
 import { PhotoUploader } from "@/components/photos/photo-uploader";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getPrivatePhotoUrl } from "@/lib/private-photo";
+import { formatEventPeriod, isEventClosed } from "@/lib/events";
 import { formatDate } from "@/lib/utils";
 
 export default async function EventDetailPage({
@@ -63,7 +64,7 @@ export default async function EventDetailPage({
     coverImageUrl = getPrivatePhotoUrl(event.cover_image_path);
   }
 
-  const isClosed = event.status === "CLOSED";
+  const isClosed = isEventClosed(event);
 
   return (
     <AppShell>
@@ -95,7 +96,7 @@ export default async function EventDetailPage({
             <span className="chip">{event.event_type}</span>
             <span className="chip">
               <Camera className="h-3.5 w-3.5" />
-              {formatDate(event.event_date)}
+              {formatEventPeriod(event.event_date, event.end_date)}
             </span>
             <span className="chip">
               <ImageIcon className="h-3.5 w-3.5" />
@@ -124,7 +125,14 @@ export default async function EventDetailPage({
                 Les photos sont figées, l’album reste consultable.
               </p>
             ) : (
-              <PhotoUploader eventId={event.id} />
+              <div className="flex flex-col items-start gap-1 md:items-end">
+                <PhotoUploader eventId={event.id} />
+                {event.end_date ? (
+                  <span className="text-xs text-ink-faint">
+                    Ajout de photos possible jusqu’au {formatDate(`${event.end_date}T12:00:00`)}
+                  </span>
+                ) : null}
+              </div>
             )}
           </div>
         </div>
