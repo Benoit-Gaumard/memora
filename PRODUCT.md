@@ -9,7 +9,7 @@ web
 ## Users
 
 Cible prioritaire (confirmée par le propriétaire du produit) : les particuliers qui organisent
-une fête — anniversaire, mariage, soirée entre amis, fête de famille. L'organisateur crée
+une fête : anniversaire, mariage, soirée entre amis, fête de famille. L'organisateur crée
 l'événement, invite ses proches et veut récupérer toutes les photos prises par les invités.
 
 Second public, servi par le même produit : les invités de l'événement. Ils rejoignent via un
