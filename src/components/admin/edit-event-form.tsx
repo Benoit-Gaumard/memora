@@ -177,10 +177,8 @@ export function EditEventForm({
           onChange={(fieldEvent) => setStatus(fieldEvent.target.value)}
           className="field mt-2"
         >
-          <option value="DRAFT">Brouillon</option>
           <option value="ACTIVE">Actif</option>
           <option value="CLOSED">Clôturé</option>
-          <option value="ARCHIVED">Archivé</option>
         </select>
       </label>
 

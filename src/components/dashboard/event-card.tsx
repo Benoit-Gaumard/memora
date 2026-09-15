@@ -50,10 +50,17 @@ export function EventCard({
       <div className="space-y-3 p-5">
         <div className="flex flex-wrap items-center gap-2">
           <span className="chip">{event.event_type}</span>
-          <span className="chip">
-            <Lock className="h-3.5 w-3.5" />
-            {event.registration_enabled ? "inscriptions ouvertes" : "inscriptions fermées"}
-          </span>
+          {event.status === "CLOSED" ? (
+            <span className="chip bg-citron">
+              <Lock className="h-3.5 w-3.5" />
+              album clôturé
+            </span>
+          ) : (
+            <span className="chip">
+              <Lock className="h-3.5 w-3.5" />
+              {event.registration_enabled ? "inscriptions ouvertes" : "inscriptions fermées"}
+            </span>
+          )}
         </div>
 
         <p className="text-base leading-7 text-ink-soft">{event.description}</p>

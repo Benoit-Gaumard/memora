@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Camera, ImageIcon } from "lucide-react";
+import { Camera, Download, ImageIcon, Lock } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { PhotoGrid } from "@/components/gallery/photo-grid";
@@ -63,6 +63,8 @@ export default async function EventDetailPage({
     coverImageUrl = getPrivatePhotoUrl(event.cover_image_path);
   }
 
+  const isClosed = event.status === "CLOSED";
+
   return (
     <AppShell>
       <section className="paper mb-8 overflow-hidden p-0">
@@ -99,9 +101,32 @@ export default async function EventDetailPage({
               <ImageIcon className="h-3.5 w-3.5" />
               {photosWithUrls.length} photos
             </span>
+            {isClosed ? (
+              <span className="chip bg-citron">
+                <Lock className="h-3.5 w-3.5" />
+                Album clôturé
+              </span>
+            ) : null}
           </div>
 
-          <PhotoUploader eventId={event.id} />
+          <div className="flex flex-wrap items-center gap-3 md:justify-end">
+            {photosWithUrls.length > 0 && event.download_enabled ? (
+              <a
+                href={`/api/event-archive?slug=${encodeURIComponent(event.slug)}`}
+                className="btn btn-sm btn-citron"
+              >
+                <Download className="h-4 w-4" />
+                Télécharger le ZIP
+              </a>
+            ) : null}
+            {isClosed ? (
+              <p className="text-sm font-semibold text-ink-soft">
+                Les photos sont figées, l’album reste consultable.
+              </p>
+            ) : (
+              <PhotoUploader eventId={event.id} />
+            )}
+          </div>
         </div>
       </section>
 
