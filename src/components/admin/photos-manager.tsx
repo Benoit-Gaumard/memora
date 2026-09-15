@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Download, Trash2, X } from "lucide-react";
+import { Download, Maximize2, Trash2, X } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { formatShortDate } from "@/lib/utils";
 
@@ -16,6 +16,7 @@ export interface AdminPhotoItem {
   eventName: string;
   authorName: string;
   url: string | null;
+  thumbnailUrl: string | null;
 }
 
 export interface AdminEventOption {
@@ -117,10 +118,6 @@ export function PhotosManager({
 
         {photos.length ? (
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-sm text-ink-soft">
-              <input type="checkbox" checked={allSelected} onChange={toggleAll} />
-              Tout sélectionner
-            </label>
             <button
               type="button"
               onClick={handleBulkDelete}
@@ -137,41 +134,79 @@ export function PhotosManager({
       </div>
 
       {photos.length ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {photos.map((photo) => (
-            <div
-              key={photo.id}
-              className="overflow-hidden paper p-0"
-            >
-              <div className="relative aspect-square overflow-hidden bg-paper">
-                <label className="absolute left-2 top-2 z-10 rounded-full border-2 border-ink bg-white p-1.5">
+        <div className="overflow-x-auto paper p-0">
+          <table className="min-w-full text-left text-sm text-ink-soft">
+            <thead className="bg-paper text-ink-soft">
+              <tr>
+                <th className="px-4 py-3">
                   <input
                     type="checkbox"
-                    checked={selectedIds.has(photo.id)}
-                    onChange={() => toggleOne(photo.id)}
+                    checked={allSelected}
+                    onChange={toggleAll}
+                    aria-label="Tout sélectionner"
                   />
-                </label>
-                {photo.url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={photo.url}
-                    alt={photo.original_filename}
-                    onClick={() => setPreviewPhoto(photo)}
-                    className="h-full w-full cursor-pointer object-cover transition hover:opacity-90"
-                  />
-                ) : null}
-              </div>
-              <div className="space-y-1 p-3">
-                <div className="truncate text-sm font-medium text-ink">{photo.original_filename}</div>
-                <div className="truncate text-xs text-ink-soft">
-                  {photo.eventName} · {photo.authorName}
-                </div>
-                <div className="text-xs text-ink-faint">
-                  {photo.uploaded_at ? formatShortDate(photo.uploaded_at) : ""}
-                </div>
-              </div>
-            </div>
-          ))}
+                </th>
+                {["", "Fichier", "Événement", "Auteur", "Date", ""].map((header, index) => (
+                  <th key={`${header}-${index}`} className="px-4 py-3 font-semibold">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {photos.map((photo) => {
+                const thumbnailUrl = photo.thumbnailUrl ?? photo.url;
+
+                return (
+                  <tr key={photo.id} className="border-t border-ink/15">
+                    <td className="px-4 py-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(photo.id)}
+                        onChange={() => toggleOne(photo.id)}
+                        aria-label={`Sélectionner ${photo.original_filename}`}
+                      />
+                    </td>
+                    <td className="px-4 py-4">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewPhoto(photo)}
+                        className="block h-12 w-16 overflow-hidden rounded-xl border border-ink/15 bg-paper transition hover:opacity-80"
+                        aria-label={`Agrandir ${photo.original_filename}`}
+                      >
+                        {thumbnailUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={thumbnailUrl}
+                            alt={photo.original_filename}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : null}
+                      </button>
+                    </td>
+                    <td className="max-w-xs truncate px-4 py-4 font-semibold text-ink">
+                      {photo.original_filename}
+                    </td>
+                    <td className="px-4 py-4">{photo.eventName}</td>
+                    <td className="px-4 py-4">{photo.authorName}</td>
+                    <td className="px-4 py-4">
+                      {photo.uploaded_at ? formatShortDate(photo.uploaded_at) : ""}
+                    </td>
+                    <td className="px-4 py-4">
+                      <button
+                        type="button"
+                        onClick={() => setPreviewPhoto(photo)}
+                        className="btn btn-sm btn-citron"
+                      >
+                        <Maximize2 className="h-3.5 w-3.5" />
+                        Agrandir
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       ) : (
         <div className="paper p-8 text-center text-ink-soft">
