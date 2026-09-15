@@ -36,7 +36,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="display-sm text-2xl text-white">
             Toutes les photos de la fête, au même endroit.
           </div>
-          <p className="text-sm">Memora — albums privés pour vos événements.</p>
+          <p className="text-sm">Memora, albums privés pour vos événements.</p>
         </div>
       </footer>
     </div>

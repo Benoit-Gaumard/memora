@@ -1,7 +1,7 @@
-# DESIGN.md — Memora
+# DESIGN.md : Memora
 
 Monde visuel : **cotillons en papier**.
-Référence physique : la table d'une fête juste avant l'arrivée des invités — guirlandes de
+Référence physique : la table d'une fête juste avant l'arrivée des invités, avec guirlandes de
 fanions, frange de papier crépon, étiquettes découpées, photos scotchées sur un album.
 Tout ce qui est à l'écran est un morceau de papier posé, jamais une « carte d'interface ».
 
@@ -28,20 +28,20 @@ le papier clair sert à tout le reste.
 
 ## Typographie
 
-- **Display** : Bricolage Grotesque (600/700/800), `.display`, `.display-sm` — titres serrés,
+- **Display** : Bricolage Grotesque (600/700/800), `.display`, `.display-sm`. Titres serrés,
   interlignage court, jamais en capitales espacées.
-- **Texte** : Hanken Grotesk — corps à 1rem minimum, interlignage 1.75.
+- **Texte** : Hanken Grotesk, corps à 1rem minimum, interlignage 1.75.
 - Pas d'eyebrow / kicker `text-xs uppercase tracking-[0.2em]` : les titres se suffisent.
 
 ## Matière
 
-- `.paper` — feuille blanche, contour encre 2px, angles 26px, ombre douce. Jamais imbriquée
+- `.paper` : feuille blanche, contour encre 2px, angles 26px, ombre douce. Jamais imbriquée
   dans une autre `.paper`.
-- `.confetti` — semis de confettis, uniquement sur les fonds sombres ou saturés.
-- `.tape` — bout de scotch pour fixer une photo.
-- `.marker` — surlignage citron tracé à la main derrière un fragment de titre.
-- `.scallop-bottom` — bord inférieur festonné, comme découpé aux ciseaux cranteurs.
-- `.settle` — les photos du hero « se posent » à l'arrivée ; désactivé sous
+- `.confetti` : semis de confettis, uniquement sur les fonds sombres ou saturés.
+- `.tape` : bout de scotch pour fixer une photo.
+- `.marker` : surlignage citron tracé à la main derrière un fragment de titre.
+- `.scallop-bottom` : bord inférieur festonné, comme découpé aux ciseaux cranteurs.
+- `.settle` : les photos du hero « se posent » à l'arrivée ; désactivé sous
   `prefers-reduced-motion`.
 
 ## Composants

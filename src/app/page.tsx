@@ -19,12 +19,12 @@ import { AppShell } from "@/components/layout/app-shell";
 
 const DESIGN_CONTRACT = `<!--
 THESIS: la fête se range toute seule. Refuse la landing SaaS sobre en cartes grises.
-OWN-WORLD: cotillons en papier — aplats fuchsia/mandarine/turquoise/raisin/citron sur encre
+OWN-WORLD: cotillons en papier : aplats fuchsia/mandarine/turquoise/raisin/citron sur encre
 prune, cartes découpées, bords festonnés, franges de crépon, serpentins, confettis. Les aplats
 portent toujours l'encre, jamais du blanc fin.
 STORY: l'organisateur comprend qu'un QR code suffit, croit que ses invités suivront sans app,
-et clique sur « Créer mon album ».
-FIRST VIEWPORT: panneau raisin drenché, serpentins, titre découpé à gauche, deux boutons papier,
+et clique sur « Voir mes albums ».
+FIRST VIEWPORT: panneau raisin drenché, serpentins, titre découpé à gauche, un bouton papier,
 et à droite des tirages photo éparpillés qui se rangent en album.
 FORM: direction 7 (cotillons), mise en scène « le désordre qui se range », seed b90bb576.
 -->`;
@@ -130,10 +130,7 @@ export default function HomePage() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/login" className="btn btn-citron">
-                Créer mon album
-              </Link>
-              <Link href="/events" className="btn">
+              <Link href="/events" className="btn btn-citron">
                 Voir mes albums
               </Link>
             </div>
@@ -229,7 +226,7 @@ export default function HomePage() {
             />
           </svg>
 
-          <ul className="flex flex-wrap gap-3">
+          <ul className="flex flex-wrap justify-center gap-3">
             {features.map(({ icon: Icon, label, color }, index) => (
               <li
                 key={label}
@@ -253,7 +250,7 @@ export default function HomePage() {
           bureau.
         </p>
 
-        <ul className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-8 md:justify-start">
+        <ul className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-8">
           {useCases.map(({ icon: Icon, label, color }, index) => (
             <li key={label} className="flex w-32 flex-col items-center text-center">
               <span
@@ -278,8 +275,8 @@ export default function HomePage() {
           <h2 className="display max-w-xl text-[clamp(2.2rem,5vw,3.6rem)]">
             Votre prochaine fête mérite son album.
           </h2>
-          <Link href="/login" className="btn btn-citron shrink-0 text-lg">
-            Créer mon album
+          <Link href="/events" className="btn btn-citron shrink-0 text-lg">
+            Voir mes albums
           </Link>
         </div>
       </section>
