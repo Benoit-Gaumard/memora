@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, CalendarDays, ImageIcon, Lock, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, ImageIcon, Lock, MessageCircle, Users } from "lucide-react";
 import type { EventRecord } from "@/types/database";
 import { formatEventPeriod, isEventClosed } from "@/lib/events";
 
@@ -8,11 +8,13 @@ export function EventCard({
   event,
   memberCount,
   photoCount,
+  commentCount,
   coverImageUrl,
 }: {
   event: EventRecord;
   memberCount: number;
   photoCount: number;
+  commentCount: number;
   coverImageUrl?: string | null;
 }) {
   const isClosed = isEventClosed(event);
@@ -74,14 +76,18 @@ export function EventCard({
 
         <p className="text-base leading-7 text-ink-soft">{event.description}</p>
 
-        <div className="flex items-center gap-5 border-t-2 border-dashed border-ink/20 pt-3 font-display text-sm font-bold text-ink">
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t-2 border-dashed border-ink/20 pt-3 font-display text-sm font-bold text-ink">
           <span className="inline-flex items-center gap-2">
             <Users className="h-4 w-4 text-fuchsia" />
-            {memberCount} invités
+            {memberCount} {memberCount > 1 ? "invités" : "invité"}
           </span>
           <span className="inline-flex items-center gap-2">
             <ImageIcon className="h-4 w-4 text-turquoise" />
-            {photoCount} photos
+            {photoCount} {photoCount > 1 ? "photos" : "photo"}
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <MessageCircle className="h-4 w-4 text-grape" />
+            {commentCount} {commentCount > 1 ? "commentaires" : "commentaire"}
           </span>
         </div>
 

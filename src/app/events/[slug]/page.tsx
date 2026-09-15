@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Camera, Download, ImageIcon, Lock } from "lucide-react";
+import { Camera, Download, ImageIcon, Lock, MessageCircle, Users } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { AppShell } from "@/components/layout/app-shell";
 import { PhotoGrid } from "@/components/gallery/photo-grid";
 import { PhotoUploader } from "@/components/photos/photo-uploader";
+import { LeaveEventButton } from "@/components/events/leave-event-button";
 import { getSupabaseServerClient } from "@/lib/supabase-server";
 import { getPrivatePhotoUrl } from "@/lib/private-photo";
 import { formatEventPeriod, isEventClosed } from "@/lib/events";
@@ -33,7 +34,7 @@ export default async function EventDetailPage({
 
   const { data: membership } = await supabase
     .from("event_members")
-    .select("id")
+    .select("id, role")
     .eq("event_id", event.id)
     .eq("user_id", user.id)
     .eq("status", "active")
@@ -42,6 +43,24 @@ export default async function EventDetailPage({
   if (!membership) {
     notFound();
   }
+
+  const [{ count: memberCount }, { count: commentCount }, { count: myPhotoCount }] =
+    await Promise.all([
+      supabase
+        .from("event_members")
+        .select("id", { count: "exact", head: true })
+        .eq("event_id", event.id)
+        .eq("status", "active"),
+      supabase
+        .from("photo_comments")
+        .select("id", { count: "exact", head: true })
+        .eq("event_id", event.id),
+      supabase
+        .from("photos")
+        .select("id", { count: "exact", head: true })
+        .eq("event_id", event.id)
+        .eq("user_id", user.id),
+    ]);
 
   const { data: photos } = await supabase
     .from("photos")
@@ -55,7 +74,12 @@ export default async function EventDetailPage({
         ? photo.profiles[0]?.display_name
         : photo.profiles?.display_name;
 
-      return { ...photo, url: getPrivatePhotoUrl(photo.storage_display_path), authorName: authorName ?? null };
+      return {
+        ...photo,
+        url: getPrivatePhotoUrl(photo.storage_display_path),
+        thumbnailUrl: getPrivatePhotoUrl(photo.storage_thumbnail_path),
+        authorName: authorName ?? null,
+      };
     }),
   );
 
@@ -65,6 +89,11 @@ export default async function EventDetailPage({
   }
 
   const isClosed = isEventClosed(event);
+  const activeMemberCount = memberCount ?? 0;
+  const totalCommentCount = commentCount ?? 0;
+  // L'organisateur ne peut pas se désinscrire : l'album se retrouverait sans
+  // personne pour le gérer. Le bouton lui est donc simplement masqué.
+  const canLeave = membership.role !== "organizer" && event.created_by !== user.id;
 
   return (
     <AppShell>
@@ -99,8 +128,16 @@ export default async function EventDetailPage({
               {formatEventPeriod(event.event_date, event.end_date)}
             </span>
             <span className="chip">
+              <Users className="h-3.5 w-3.5" />
+              {activeMemberCount} {activeMemberCount > 1 ? "invités" : "invité"}
+            </span>
+            <span className="chip">
               <ImageIcon className="h-3.5 w-3.5" />
-              {photosWithUrls.length} photos
+              {photosWithUrls.length} {photosWithUrls.length > 1 ? "photos" : "photo"}
+            </span>
+            <span className="chip">
+              <MessageCircle className="h-3.5 w-3.5" />
+              {totalCommentCount} {totalCommentCount > 1 ? "commentaires" : "commentaire"}
             </span>
             {isClosed ? (
               <span className="chip bg-citron">
@@ -141,8 +178,17 @@ export default async function EventDetailPage({
       <section className="space-y-6">
         <PhotoGrid eventSlug={event.slug} photos={photosWithUrls} />
 
-        <div className="text-base text-ink-soft">
-          Retour à la liste de <Link href="/events" className="paper-link">mes albums</Link>.
+        <div className="flex flex-wrap items-center justify-between gap-3 text-base text-ink-soft">
+          <span>
+            Retour à la liste de <Link href="/events" className="paper-link">mes albums</Link>.
+          </span>
+          {canLeave ? (
+            <LeaveEventButton
+              eventId={event.id}
+              eventName={event.name}
+              myPhotoCount={myPhotoCount ?? 0}
+            />
+          ) : null}
         </div>
       </section>
     </AppShell>

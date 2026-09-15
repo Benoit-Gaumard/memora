@@ -8,12 +8,12 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export function DeletePhotoButton({
   photoId,
-  storagePath,
+  storagePaths,
   eventSlug,
   isOwner,
 }: {
   photoId: string;
-  storagePath: string;
+  storagePaths: string[];
   eventSlug: string;
   isOwner: boolean;
 }) {
@@ -31,7 +31,12 @@ export function DeletePhotoButton({
     setError(null);
 
     try {
-      await supabase.storage.from("event-photos").remove([storagePath]);
+      // Original, version d'affichage et vignette partagent la même ligne :
+      // les trois objets doivent partir ensemble, sinon le bucket se remplit
+      // de fichiers que plus personne ne référence.
+      await supabase.storage
+        .from("event-photos")
+        .remove(Array.from(new Set(storagePaths)));
       const { error: deleteError } = await supabase.from("photos").delete().eq("id", photoId);
 
       if (deleteError) {

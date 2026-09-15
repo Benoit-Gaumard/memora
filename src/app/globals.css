@@ -419,11 +419,38 @@ select {
       opacity: 1;
     }
   }
+
+  /* --- Attente d'une photo : un balayage, pas un trou noir ---------------- */
+  /* La vignette se pose par-dessus, donc le balayage disparaît tout seul dès
+     que l'image est décodée. Aucun JavaScript n'est nécessaire. */
+  .skeleton {
+    background-image: linear-gradient(
+      110deg,
+      rgba(255, 255, 255, 0) 30%,
+      rgba(255, 255, 255, 0.18) 50%,
+      rgba(255, 255, 255, 0) 70%
+    );
+    background-size: 220% 100%;
+    animation: skeleton-sweep 1.4s ease-in-out infinite;
+  }
+
+  @keyframes skeleton-sweep {
+    from {
+      background-position: 160% 0;
+    }
+    to {
+      background-position: -60% 0;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .skeleton {
+    animation: none;
   }
 
   .settle {
